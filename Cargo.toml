@@ -1,8 +1,20 @@
 [package]
-name = "bolt"
+name = "bolt-api"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+authors = ["Hiro <yirohido@gmail.com>"]
+license = "MIT"
+description = "Bolt API Platform"
+readme = "README.md"
+homepage = "https://github.com/hiro-codes/bolt"
+repository = "https://github.com/hiro-codes/bolt"
+keywords = ["http", "api", "cli"]
+categories = ["web-programming"]
 
 [dependencies]
+serde = "1.0.155"
+reqwest = "0.11.14"
+
+[dependencies.iced]
+version = "0.8.0"
+features = ["glow"]
