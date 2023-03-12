@@ -1,10 +1,6 @@
 use iced::widget::{button, column, text};
 use iced::{Alignment, Element, Sandbox, Settings};
 
-pub fn main() -> iced::Result {
-    Counter::run(Settings::default())
-}
-
 struct Counter {
     value: i32,
 }
@@ -23,7 +19,7 @@ impl Sandbox for Counter {
     }
 
     fn title(&self) -> String {
-        String::from("Counter - Iced")
+        String::from("Bolt")
     }
 
     fn update(&mut self, message: Message) {
@@ -47,4 +43,8 @@ impl Sandbox for Counter {
         .align_items(Alignment::Center)
         .into()
     }
+}
+
+pub fn main() {
+    Counter::run(Settings::default()).unwrap();
 }
