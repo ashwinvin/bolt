@@ -121,7 +121,7 @@ checksum = "0d8c1fef690941d3e7788d328517591fecc684c084084702d6ff1641e993699a"
 
 [[package]]
 name = "bolt-api"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "iced",
  "reqwest",
@@ -2526,6 +2526,7 @@ dependencies = [
  "libc",
  "memchr",
  "mio",
+ "num_cpus",
  "pin-project-lite",
  "socket2",
  "windows-sys 0.45.0",

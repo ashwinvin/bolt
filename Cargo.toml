@@ -1,6 +1,6 @@
 [package]
 name = "bolt-api"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Hiro <yirohido@gmail.com>"]
 license = "MIT"
@@ -13,8 +13,5 @@ categories = ["web-programming"]
 
 [dependencies]
 serde = "1.0.155"
-reqwest = "0.11.14"
-
-[dependencies.iced]
-version = "0.8.0"
-features = ["glow"]
+reqwest = { version = "0.11.14", features = ["blocking", "json"] }
+iced = {version = "0.8.0", features = ["glow"]}
