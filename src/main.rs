@@ -1,50 +1,72 @@
+use iced::widget::button::Button;
+use iced::widget::text_input::TextInput;
 use iced::widget::{button, column, text};
+use iced::Renderer;
 use iced::{Alignment, Element, Sandbox, Settings};
 
-struct Counter {
-    value: i32,
+struct BoltState {
+    response: String,
+    request: String,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 enum Message {
-    IncrementPressed,
-    DecrementPressed,
+    SendPressed,
+    TextInputChanged(String),
 }
 
-impl Sandbox for Counter {
+impl Sandbox for BoltState {
     type Message = Message;
 
     fn new() -> Self {
-        Self { value: 0 }
+        return Self {
+            response: String::from("Response body"),
+            request: String::new(),
+        };
     }
 
     fn title(&self) -> String {
-        String::from("Bolt")
+        return String::from("Bolt API Platform");
     }
 
     fn update(&mut self, message: Message) {
         match message {
-            Message::IncrementPressed => {
-                self.value += 1;
+            Message::SendPressed => {
+                let resp = get_body(&self.request);
+
+                self.response = resp;
             }
-            Message::DecrementPressed => {
-                self.value -= 1;
+
+            Message::TextInputChanged(value) => {
+                self.request = value;
             }
         }
     }
 
     fn view(&self) -> Element<Message> {
-        column![
-            button("Increment").on_press(Message::IncrementPressed),
-            text(self.value).size(50),
-            button("Decrement").on_press(Message::DecrementPressed)
-        ]
-        .padding(20)
-        .align_items(Alignment::Center)
-        .into()
+        let text_box: TextInput<'_, Message, Renderer> =
+            TextInput::new("http://", &self.request, Message::TextInputChanged);
+
+        let submit: Button<'_, Message, Renderer> = button("Send").on_press(Message::SendPressed);
+
+        let response = text(&self.response).size(20);
+
+        let header = text("Bolt API").size(50);
+
+        let final_view = column![header, text_box, submit, response,]
+            .align_items(Alignment::Center)
+            .into();
+
+        return final_view;
     }
 }
 
-pub fn main() {
-    Counter::run(Settings::default()).unwrap();
+fn get_body(url: &String) -> String {
+    let resp = reqwest::blocking::get(url).unwrap().text().unwrap();
+
+    return resp;
+}
+
+fn main() {
+    BoltState::run(Settings::default()).unwrap();
 }
