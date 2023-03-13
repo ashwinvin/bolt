@@ -62,7 +62,7 @@ impl Application for BoltState {
     fn update(&mut self, message: Message) -> Command<Message> {
         match message {
             Message::SendPressed => {
-                let resp = get_body(&self.request);
+                let resp = send_request(&self.request, self.selected_method.unwrap());
 
                 self.response = resp;
             }
@@ -127,10 +127,21 @@ impl Application for BoltState {
     }
 }
 
-fn get_body(url: &String) -> String {
-    let resp = reqwest::blocking::get(url).unwrap().text().unwrap();
+fn send_request(url: &String, method: Method) -> String {
+    match method {
+        Method::GET => {
+            let resp = reqwest::blocking::get(url).unwrap().text().unwrap();
 
-    return resp;
+            return resp;
+        }
+
+        Method::POST => {
+            let client = reqwest::blocking::Client::new();
+            let resp = client.post(url).send().unwrap().text().unwrap();
+
+            return resp;
+        }
+    }
 }
 
 fn main() {
