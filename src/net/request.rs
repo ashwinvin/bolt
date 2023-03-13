@@ -1,4 +1,4 @@
-use crate::gui::Method;
+use crate::Method;
 
 pub fn send_request(url: &String, method: Method) -> String {
     match method {
