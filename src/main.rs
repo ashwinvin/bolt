@@ -1,8 +1,7 @@
 use iced::widget::button::Button;
 use iced::widget::text_input::TextInput;
 use iced::widget::{button, column, text};
-use iced::Renderer;
-use iced::{Alignment, Element, Sandbox, Settings};
+use iced::{executor, Alignment, Application, Command, Element, Renderer, Settings, Theme};
 
 struct BoltState {
     response: String,
@@ -15,21 +14,26 @@ enum Message {
     TextInputChanged(String),
 }
 
-impl Sandbox for BoltState {
+impl Application for BoltState {
+    type Executor = executor::Default;
     type Message = Message;
+    type Theme = Theme;
+    type Flags = ();
 
-    fn new() -> Self {
-        return Self {
+    fn new(_flags: Self::Flags) -> (Self, Command<Message>) {
+        let new_self = Self {
             response: String::from("Response body"),
             request: String::new(),
         };
+
+        return (new_self, Command::none());
     }
 
     fn title(&self) -> String {
         return String::from("Bolt API Platform");
     }
 
-    fn update(&mut self, message: Message) {
+    fn update(&mut self, message: Message) -> Command<Message> {
         match message {
             Message::SendPressed => {
                 let resp = get_body(&self.request);
@@ -41,6 +45,8 @@ impl Sandbox for BoltState {
                 self.request = value;
             }
         }
+
+        return Command::none();
     }
 
     fn view(&self) -> Element<Message> {
@@ -58,6 +64,10 @@ impl Sandbox for BoltState {
             .into();
 
         return final_view;
+    }
+
+    fn theme(&self) -> Self::Theme {
+        Theme::Dark
     }
 }
 
