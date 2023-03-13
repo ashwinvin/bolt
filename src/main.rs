@@ -10,7 +10,7 @@ use iced::{
     executor, theme, Alignment, Application, Command, Element, Length, Renderer, Settings, Theme,
 };
 
-const JSON_LOREM: &str = r#"[
+const JSON_LOREM: &str = r#"
   {
     "_id": "640eb7c4201230c379efbe84",
     "index": 0,
@@ -55,98 +55,8 @@ const JSON_LOREM: &str = r#"[
     ],
     "greeting": "Hello, Santana Randall! You have 6 unread messages.",
     "favoriteFruit": "strawberry"
-  },
-  {
-    "_id": "640eb7c4f3ba99995608ed87",
-    "index": 1,
-    "guid": "76d929e5-5be7-42d5-94f5-a276a4a43620",
-    "isActive": false,
-    "balance": "$2,378.35",
-    "picture": "http://placehold.it/32x32",
-    "age": 38,
-    "eyeColor": "green",
-    "name": "Erna Savage",
-    "gender": "female",
-    "company": "BIFLEX",
-    "email": "ernasavage@biflex.com",
-    "phone": "+1 (945) 475-3269",
-    "address": "502 Foster Avenue, Deltaville, Wisconsin, 920",
-    "about": "Duis sint ex in reprehenderit exercitation nulla dolore consectetur. Cupidatat consectetur sit excepteur proident in sit do quis commodo consequat aliqua officia do. Elit deserunt sit non laboris mollit sit do non id commodo aliqua cupidatat ipsum. Minim commodo proident enim exercitation veniam pariatur. Commodo voluptate velit deserunt quis nostrud est.\r\n",
-    "registered": "2019-11-27T08:50:30 -01:00",
-    "latitude": 78.659119,
-    "longitude": -109.272409,
-    "tags": [
-      "commodo",
-      "esse",
-      "ex",
-      "ullamco",
-      "deserunt",
-      "aliquip",
-      "exercitation"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Palmer Justice"
-      },
-      {
-        "id": 1,
-        "name": "Mckinney Hamilton"
-      },
-      {
-        "id": 2,
-        "name": "Rollins Jimenez"
-      }
-    ],
-    "greeting": "Hello, Erna Savage! You have 10 unread messages.",
-    "favoriteFruit": "strawberry"
-  },
-  {
-    "_id": "640eb7c4a6fe796a7487c851",
-    "index": 2,
-    "guid": "787974c3-665f-42e0-9dae-14f1eac893c3",
-    "isActive": true,
-    "balance": "$2,350.07",
-    "picture": "http://placehold.it/32x32",
-    "age": 39,
-    "eyeColor": "brown",
-    "name": "Lorna Mcmillan",
-    "gender": "female",
-    "company": "POOCHIES",
-    "email": "lornamcmillan@poochies.com",
-    "phone": "+1 (919) 490-2627",
-    "address": "239 Malbone Street, Welch, Washington, 8192",
-    "about": "Velit aute consequat cupidatat qui reprehenderit. Consequat ex dolor dolore anim cupidatat culpa ea adipisicing reprehenderit dolor quis officia. Aute aliquip dolore laboris exercitation voluptate aliquip sint officia dolor incididunt aliqua laborum. Sit culpa ea non id occaecat et excepteur excepteur non velit pariatur aliqua enim.\r\n",
-    "registered": "2018-04-16T12:44:06 -01:00",
-    "latitude": -47.392614,
-    "longitude": 89.068682,
-    "tags": [
-      "enim",
-      "qui",
-      "ipsum",
-      "magna",
-      "velit",
-      "amet",
-      "elit"
-    ],
-    "friends": [
-      {
-        "id": 0,
-        "name": "Barnett Sanders"
-      },
-      {
-        "id": 1,
-        "name": "Diann Salinas"
-      },
-      {
-        "id": 2,
-        "name": "Opal Bonner"
-      }
-    ],
-    "greeting": "Hello, Lorna Mcmillan! You have 5 unread messages.",
-    "favoriteFruit": "apple"
-  },
-  "#;
+  }
+"#;
 
 struct BoltState {
     response: String,
@@ -163,6 +73,7 @@ enum Message {
     TextInputChanged(String),
     MethodSelected(Method),
     Scrolled(scrollable::RelativeOffset),
+    ResponseInputChanged(String),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -220,6 +131,8 @@ impl Application for BoltState {
             Message::TextInputChanged(value) => {
                 self.request = value;
             }
+
+            Message::ResponseInputChanged(_value) => {}
 
             Message::MethodSelected(meth) => {
                 self.selected_method = Some(meth);
@@ -279,6 +192,12 @@ impl Application for BoltState {
         let response = text(&self.response)
             .size(20)
             .style(theme::Text::Color(Color::from_rgb(251.0, 87.0, 51.0)));
+
+        // let response = TextInput::new(
+        //     "Response body",
+        //     &self.response,
+        //     Message::ResponseInputChanged,
+        // );
 
         let scroller: iced::widget::scrollable::Scrollable<'_, Message, Renderer> =
             scrollable(column![response].width(Length::Fill).spacing(40))
