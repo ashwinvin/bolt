@@ -8,9 +8,11 @@ use crate::net::request::send_request;
 pub fn process_update(sel: &mut BoltState, message: Message) -> Command<Message> {
     match message {
         Message::SendPressed => {
-            let resp = send_request(&sel.request, sel.selected_method.unwrap());
+            if sel.request != "" {
+                let resp = send_request(&sel.request, sel.selected_method.unwrap());
 
-            sel.response = resp;
+                sel.response = resp;
+            }
         }
 
         Message::TextInputChanged(value) => {
