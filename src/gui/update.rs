@@ -1,9 +1,19 @@
-use crate::gui::interface::Message;
-
+use crate::net::request::send_request;
 use crate::BoltState;
+use crate::Method;
+use iced::widget::scrollable;
 use iced::Command;
 
-use crate::net::request::send_request;
+#[derive(Debug, Clone)]
+pub enum Message {
+    SendPressed,
+    DocsPressed,
+    SettingsPressed,
+    TextInputChanged(String),
+    MethodSelected(Method),
+    Scrolled(scrollable::RelativeOffset),
+    ResponseInputChanged(String),
+}
 
 pub fn process_update(sel: &mut BoltState, message: Message) -> Command<Message> {
     match message {
