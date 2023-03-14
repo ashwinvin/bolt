@@ -1,4 +1,5 @@
 use crate::gui::update::process_update;
+use crate::gui::update::Message;
 use crate::gui::view::get_view;
 use crate::BoltState;
 use crate::Method;
@@ -6,34 +7,6 @@ use crate::Method;
 use iced::widget::scrollable;
 
 use iced::{executor, Application, Command, Element, Theme};
-
-#[derive(Debug, Clone)]
-pub enum Message {
-    SendPressed,
-    DocsPressed,
-    SettingsPressed,
-    TextInputChanged(String),
-    MethodSelected(Method),
-    Scrolled(scrollable::RelativeOffset),
-    ResponseInputChanged(String),
-}
-
-impl std::fmt::Display for Method {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Method::GET => "GET",
-                Method::POST => "POST",
-            }
-        )
-    }
-}
-
-impl Method {
-    pub const ALL: [Method; 2] = [Method::GET, Method::POST];
-}
 
 impl Application for BoltState {
     type Executor = executor::Default;
@@ -68,6 +41,16 @@ impl Application for BoltState {
         return Theme::Dark;
     }
 }
+
+const JSON_LOREM_IPSU: &str = r#"
+  {
+    "_id": "640eb7c4201230c379efbe84",
+    "index": 0,
+    "guid": "f949e9d0-291d-4d05-a116-f43b0569ed12",
+    "isActive": true,
+   "favoriteFruit": "strawberry"
+  }
+"#;
 
 const JSON_LOREM_IPSUM: &str = r#"
   {
