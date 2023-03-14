@@ -208,7 +208,7 @@ pub fn get_view(sel: &BoltState) -> Element<Message> {
         vertical_space(5),
         header,
         horizontal_rule(1),
-        body.height(Length::FillPortion(13)),
+        body.height(Length::FillPortion(7)),
         horizontal_rule(1),
         console.height(Length::FillPortion(1))
     ]
