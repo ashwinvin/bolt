@@ -40,11 +40,11 @@ impl Component for App {
 
             <div class="navbar">
                 <div class="logo">
-                    <div>{"Bolt API"}</div>
+                    <div>{"Bolt API Platform"}</div>
                 </div>
 
                 <div class="nav-links">
-                    <div>{"Docs"}</div>
+                    <div>{"Documentation"}</div>
                     <div>{"Settings"}</div>
                 </div>
             </div>
