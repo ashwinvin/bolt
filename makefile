@@ -1,4 +1,4 @@
-.PHONY: setup all build-yew build-tauri watch-yew watch-tauri
+.PHONY: run setup all build-yew build-tauri watch-yew watch-tauri web
 
 setup:
 	cargo install tauri-cli
@@ -6,6 +6,8 @@ setup:
 
 all: build-yew build-tauri
 	cp -r ./tauri/target/release/bundle ./target
+
+run: all
 
 build-yew:
 	cd yew && trunk build -d ../tauri/dist
