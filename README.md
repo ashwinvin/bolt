@@ -11,10 +11,6 @@ git checkout tauri
 ```
 
 ```
-cd bolt
-```
-
-```
 cd yew && trunk build && cd ..
 ```
 
