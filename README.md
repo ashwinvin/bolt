@@ -11,10 +11,10 @@ git checkout tauri
 ```
 
 ```
-cd yew && trunk build -d ../tauri/dist && cd ..
+make setup
 ```
 
 ```
-cargo tauri dev
+make run
 ```
 
