@@ -11,7 +11,7 @@ git checkout tauri
 ```
 
 ```
-cd yew && trunk build && cd ..
+cd yew && trunk build -d ../tauri/dist && cd ..
 ```
 
 ```
