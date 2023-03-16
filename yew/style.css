@@ -30,18 +30,45 @@ body {
 	align-items: center;
 	background-color: rgb(39, 40, 41);
 	padding: 0 20px;
+	border-bottom: 1px solid gray;
 }
 
 .sidebar1 {
 	width: 5vw;
 	background-color: rgb(50, 51, 54);
 	height: 90vh;
+	border-right: 1px solid gray;
 }
 
 .sidebar2 {
 	width: 15vw;
 	background-color: rgb(41, 43, 46);;
 	height: 90vh;
+	border-right: 1px solid gray;
+}
+
+.sidebaritem {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: darkgray;
+	height: 50px;
+	font-size: 10px;
+	margin-bottom: 5px;
+	border-left: 2px solid orange;
+	margin: 3px;
+}
+
+
+.sidebar2item {
+	display: flex;
+	flex-direction: column;
+	align-items: left;
+	justify-content: center;
+	background: gray;
+	height: 20px;
+	font-size: 10px;
 }
 
 .content {
@@ -50,11 +77,20 @@ body {
 	background-color: rgb(35, 36, 38);
 }
 
+.requestbar {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-left: 20px;
+	margin-top: 20px;
+}
+
 .footer {
 	height: 5vh;
 	display: flex;
 	flex-direction: row;
 	background-color: rgb(39, 40, 41);
+	border-top: 1px solid gray;
 }
 
 .logo {
@@ -62,7 +98,7 @@ body {
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	font-size: 20px;
+	font-size: 25px;
 	font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -73,4 +109,79 @@ body {
 
 .nav-links div {
 	margin-right: 20px;
+}
+
+.round {
+  background-image:
+    linear-gradient(45deg, transparent 50%, gray 50%),
+    linear-gradient(135deg, gray 50%, transparent 50%),
+    radial-gradient(#ddd 70%, transparent 72%);
+  background-position:
+    calc(100% - 20px) calc(1em + 2px),
+    calc(100% - 15px) calc(1em + 2px),
+    calc(100% - .5em) .5em;
+  background-size:
+    5px 5px,
+    5px 5px,
+    1.5em 1.5em;
+  background-repeat: no-repeat;
+}
+
+.round:focus {
+  background-image:
+    linear-gradient(45deg, white 50%, transparent 50%),
+    linear-gradient(135deg, transparent 50%, white 50%),
+    radial-gradient(gray 70%, transparent 72%);
+  background-position:
+    calc(100% - 15px) 1em,
+    calc(100% - 20px) 1em,
+    calc(100% - .5em) .5em;
+  background-size:
+    5px 5px,
+    5px 5px,
+    1.5em 1.5em;
+  background-repeat: no-repeat;
+  border-color: green;
+  outline: 0;
+}
+
+
+select:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #000;
+}
+
+
+
+select {
+	width: 120px;
+	height: 40px;
+  
+	/* styling */
+  background-color: white;
+  border: thin solid blue;
+  border-radius: 4px;
+  display: inline-block;
+  font: inherit;
+  line-height: 1.5em;
+  padding: 0.5em 3.5em 0.5em 1em;
+
+  /* reset */
+
+  margin: 0;      
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.urlinput {
+	height: 40px;
+	width: 600px;
+}
+
+.sendbtn {
+	height: 40px;
+	width: 60px;
 }
