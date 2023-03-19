@@ -75,6 +75,10 @@ body {
 	height: 90vh;
 	width: 80vw;
 	background-color: rgb(35, 36, 38);
+	display: flex;
+	flex-direction: column;
+	align-items: left;
+	justify-content: space-between;
 }
 
 .requestbar {
@@ -85,10 +89,10 @@ body {
 	margin-top: 20px;
 }
 
-.footer {
+.console {
 	height: 5vh;
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	background-color: rgb(39, 40, 41);
 	border-top: 1px solid gray;
 }
@@ -174,14 +178,37 @@ select {
   box-sizing: border-box;
   -webkit-appearance: none;
   -moz-appearance: none;
+
+
 }
 
 .urlinput {
 	height: 40px;
-	width: 600px;
+	width: 60vw;
+}
+
+.urlinput:focus {
+  outline: none;
 }
 
 .sendbtn {
 	height: 40px;
-	width: 60px;
+	width: 70px;
+	background: skyblue;
+	border: 0px;
+	border-radius: 5px;
+	color: white;
+	margin-left: 5px;
+}
+
+.responseinput {
+	width: 100%;
+	height: 250px;
+	background-color: rgb(39, 40, 41);
+	border: 1px solid gray;
+	color: white;
+}
+
+.responseinput:focus {
+  outline: none;
 }
