@@ -3,7 +3,8 @@
     "beforeBuildCommand": "",
     "beforeDevCommand": "",
     "devPath": "./dist",
-    "distDir": "./dist"
+    "distDir": "./dist",
+    "withGlobalTauri": true
   },
   "package": {
     "productName": "bolt",

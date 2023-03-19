@@ -27,8 +27,10 @@ dependencies = [
 name = "bolt-yew"
 version = "0.1.0"
 dependencies = [
- "gloo",
+ "js-sys",
+ "serde",
  "wasm-bindgen",
+ "web-sys",
  "yew",
 ]
 
