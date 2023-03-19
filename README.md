@@ -11,6 +11,14 @@ cd bolt
 ```
 
 ```
-cargo run
+git checkout tauri
+```
+
+```
+make setup
+```
+
+```
+make run
 ```
 
