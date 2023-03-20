@@ -5,7 +5,6 @@
 }
 
 body {
-	height: 100%;
 	cursor: default;
 	user-select: none;
 	color: white;
@@ -16,6 +15,8 @@ body {
 	display: flex;
 	flex-direction: column;
 	height: 100vh;
+	width: 100vw;
+	overflow: hidden;
 }
 
 .main {
@@ -115,6 +116,10 @@ body {
 	margin-right: 20px;
 }
 
+.pointer {
+	cursor: pointer;
+}
+
 .round {
   background-image:
     linear-gradient(45deg, transparent 50%, gray 50%),
@@ -150,14 +155,14 @@ body {
 }
 
 
-select:-moz-focusring {
+.round:-moz-focusring {
   color: transparent;
   text-shadow: 0 0 0 #000;
 }
 
 
 
-select {
+.round {
 	width: 120px;
 	height: 40px;
   
@@ -178,8 +183,6 @@ select {
   box-sizing: border-box;
   -webkit-appearance: none;
   -moz-appearance: none;
-
-
 }
 
 .urlinput {
@@ -207,8 +210,59 @@ select {
 	background-color: rgb(39, 40, 41);
 	border: 1px solid gray;
 	color: white;
+	font-size: 15px;
 }
 
 .responseinput:focus {
   outline: none;
+}
+
+.reqtabs {
+  display: flex;
+	flex-direction: row;
+  width: 100%;
+ 	margin-top: 10px;
+}
+
+.resptabs {
+  display: flex;
+	flex-direction: row;
+  width: 100%;
+ 	margin-top: 10px;
+}
+
+.tab {
+  display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	
+	height: 30px;
+	width: 70px;
+}
+
+.tab:hover {
+	 background: gray;
+}
+
+.tabSelected {
+  background: gray;
+}
+
+
+.respline {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.respstats {
+	display: flex;
+	flex-direction: row;
+}
+
+.respstat {
+	font-size: 13px;
+	width: 65px;
 }
