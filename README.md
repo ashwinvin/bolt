@@ -11,10 +11,6 @@ cd bolt
 ```
 
 ```
-git checkout tauri
-```
-
-```
 make setup
 ```
 
