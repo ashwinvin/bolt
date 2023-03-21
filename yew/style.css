@@ -53,15 +53,20 @@ body {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	background: rgb(23, 59, 97);
+	background: rgb(7, 31, 56);
 	height: 50px;
 	font-size: 10px;
 	margin-bottom: 5px;
 	margin: 3px;
 }
 
+.sidebaritem:hover {
+	 background: rgb(23, 59, 97);
+}
+
 .sidebaritem-selected {
 	border-left: 2px solid orange;
+	background: rgb(23, 59, 97);
 }
 
 
@@ -73,6 +78,10 @@ body {
 	background: rgb(7, 31, 56);
 	height: 20px;
 	font-size: 10px;
+}
+
+.sidebar2item:hover {
+	 background: rgb(23, 59, 97);
 }
 
 .sidebar2item-selected {
@@ -172,6 +181,10 @@ body {
 	color: white;
 	margin-left: 5px;
 	font-size: 15px;
+}
+
+.sendbtn:hover {
+	 background: rgb(186, 123, 6);
 }
 
 .responseinput {

@@ -87,7 +87,7 @@ pub fn get_main(_sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                         <div class="respline">
                             <div class="resptabs">
                                 <div class="tab pointer tabSelected">{"Body"}</div>
-                                <div class="tab pointer">{"Params"}</div>
+                                <div class="tab pointer">{"Header"}</div>
                             </div>
 
                             <div class="respstats">

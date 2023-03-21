@@ -1,4 +1,4 @@
-.PHONY: build run setup all build-yew build-tauri watch-yew watch-tauri web clean-yew clean-tauri clean
+.PHONY: build run setup all watch build-yew build-tauri watch-yew watch-tauri web clean-yew clean-tauri clean
 
 all: build
 
@@ -10,6 +10,10 @@ build: build-yew build-tauri
 	cp -r ./tauri/target/release/bundle ./target
 
 run: build-yew watch-tauri
+
+watch:
+	make watch-yew &
+	make watch-tauri
 
 build-yew:
 	cd yew && trunk build -d ../tauri/dist
