@@ -53,7 +53,7 @@ pub fn get_main(_sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                 </div>
 
                 <div class="content">
-                    <div>
+                    <div class="req">
                         <div class="requestbar">
                             <div class="">
                                 <select class="round pointer">
@@ -76,18 +76,18 @@ pub fn get_main(_sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                         </div>
 
                         <div class="tabcontent">
-                            <textarea class="responseinput" rows = "5" cols = "60" value="Request body" name = "description">
+                            <textarea class="reqbody" value="Request body">
                                 {"Enter details here..."}
                             </textarea>
                         </div>
                     </div>
 
 
-                    <div>
+                    <div class="resp">
                         <div class="respline">
                             <div class="resptabs">
                                 <div class="tab pointer tabSelected">{"Body"}</div>
-                                <div class="tab pointer">{"Params"}</div>
+                                <div class="tab pointer">{"Headers"}</div>
                             </div>
 
                             <div class="respstats">
@@ -98,7 +98,7 @@ pub fn get_main(_sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                         </div>
 
                         <div class="tabcontent">
-                            <textarea class="responseinput" rows = "5" cols = "60" value="Response body" name = "description">
+                            <textarea class="respbody" value="Response body">
                                 {"Enter details here..."}
                             </textarea>
                         </div>
