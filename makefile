@@ -1,10 +1,12 @@
-.PHONY: run setup all build-yew build-tauri watch-yew watch-tauri web clean-yew clean-tauri clean
+.PHONY: build run setup all build-yew build-tauri watch-yew watch-tauri web clean-yew clean-tauri clean
+
+all: build
 
 setup:
 	cargo install tauri-cli
 	cargo install trunk
 
-all: build-yew build-tauri
+build: build-yew build-tauri
 	cp -r ./tauri/target/release/bundle ./target
 
 run: build-yew watch-tauri
