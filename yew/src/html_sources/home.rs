@@ -56,14 +56,14 @@ pub fn get_main(_sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                     <div class="req">
                         <div class="requestbar">
                             <div class="">
-                                <select class="round pointer">
+                                <select id="methodselect" class="methodselect pointer">
                                     <option value="get">{"GET"}</option>
                                     <option value="post">{"POST"}</option>
                                 </select>
                             </div>
 
                             <div>
-                                <input class="urlinput" type="text" placeholder="http://" />
+                                <input id="urlinput" class="urlinput" type="text" placeholder="http://" />
                             </div>
 
                             <button class="sendbtn pointer" type="button" onclick={ctx.link().callback(|_| Msg::SendPressed)}>{"Send"}</button>
@@ -76,8 +76,8 @@ pub fn get_main(_sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                         </div>
 
                         <div class="tabcontent">
-                            <textarea class="reqbody" value="Request body">
-                                {"Enter details here..."}
+                            <textarea class="reqbody" placeholder="Request body">
+
                             </textarea>
                         </div>
                     </div>
@@ -98,8 +98,8 @@ pub fn get_main(_sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                         </div>
 
                         <div class="tabcontent">
-                            <textarea class="respbody" value="Response body">
-                                {"Enter details here..."}
+                            <textarea id="respbody" class="respbody" placeholder="Response body" readonly=true>
+
                             </textarea>
                         </div>
                     </div>
