@@ -6,7 +6,13 @@ mod net;
 
 #[wasm_bindgen(module = "/script.js")]
 extern "C" {
-    fn send_btn();
+    fn send_request(url: &str, method: &str);
+
+    fn get_method() -> String;
+
+    fn get_url() -> String;
+
+    fn set_respbody(content: &str);
 
     fn bolt_log(log: &str);
 }
@@ -24,10 +30,9 @@ pub enum Method {
 }
 
 pub struct BoltApp {
-    _value: i64,
     method: Method,
     _request: String,
-    response: String,
+    _response: String,
 }
 
 impl Component for BoltApp {
@@ -36,10 +41,9 @@ impl Component for BoltApp {
 
     fn create(_ctx: &Context<Self>) -> Self {
         Self {
-            _value: 0,
             method: Method::GET,
             _request: "http:".to_string(),
-            response: "the response".to_string(),
+            _response: "the response".to_string(),
         }
     }
 
@@ -52,8 +56,9 @@ impl Component for BoltApp {
             }
 
             Msg::SendPressed => {
-                bolt_log("yew is sending to tauri");
-                send_btn();
+                bolt_log("send pressed");
+
+                send_pressed(&get_url(), &get_method());
 
                 return true;
             }
@@ -72,4 +77,8 @@ fn main() {
 #[wasm_bindgen]
 pub fn yew_func() {
     bolt_log("yew was called!!");
+}
+
+fn send_pressed(url: &str, method: &str) {
+    send_request(url, method);
 }

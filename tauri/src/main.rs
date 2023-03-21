@@ -5,7 +5,7 @@ use tauri::Window;
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![send_btn, bolt_log])
+        .invoke_handler(tauri::generate_handler![send_request, bolt_log])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -16,27 +16,53 @@ fn bolt_log(log: &str) {
 }
 
 #[tauri::command]
-async fn send_btn(window: Window) {
-    println!("tauri received from yew");
+fn send_request(window: Window, url: &str, method: &str) {
+    let mtd = match method {
+        "post" => Method::POST,
+        "get" => Method::GET,
+        &_ => Method::NONE,
+    };
 
-    call_yew(window);
+    let url = url.to_string();
+    let _handle = std::thread::spawn(move || {
+        let resp = http_send(&url, mtd);
+
+        window
+            .emit("receive_response", Payload { body: resp.into() })
+            .unwrap();
+    });
 }
 
 // the payload type must implement `Serialize` and `Clone`.
 #[derive(Clone, serde::Serialize)]
 struct Payload {
-    message: String,
+    body: String,
 }
 
-fn call_yew(window: Window) {
-    bolt_log("tauri is sending to yew");
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Method {
+    GET,
+    POST,
+    NONE,
+}
 
-    window
-        .emit(
-            "yew_func",
-            Payload {
-                message: "Hello Yew!!".into(),
-            },
-        )
-        .unwrap();
+fn http_send(url: &str, method: Method) -> String {
+    match method {
+        Method::GET => {
+            let resp = reqwest::blocking::get(url).unwrap().text().unwrap();
+
+            return resp;
+        }
+
+        Method::POST => {
+            let client = reqwest::blocking::Client::new();
+            let resp = client.post(url).send().unwrap().text().unwrap();
+
+            return resp;
+        }
+
+        Method::NONE => {
+            panic!("Invalid method");
+        }
+    }
 }
