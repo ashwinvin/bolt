@@ -56,8 +56,6 @@ impl Component for BoltApp {
             }
 
             Msg::SendPressed => {
-                bolt_log("send pressed");
-
                 send_pressed(&get_url(), &get_method());
 
                 return true;

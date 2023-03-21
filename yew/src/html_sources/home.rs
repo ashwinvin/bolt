@@ -91,9 +91,9 @@ pub fn get_main(_sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                             </div>
 
                             <div class="respstats">
-                                <div class="respstat">{"Status: 0"}</div>
-                                <div class="respstat">{"Time: 0ms"}</div>
-                                <div class="respstat">{"Size: 0B"}</div>
+                                <div id="status" class="respstat">{"Status: 0"}</div>
+                                <div id="time" class="respstat">{"Time: 0ms"}</div>
+                                <div id="size" class="respstat">{"Size: 0B"}</div>
                             </div>
                         </div>
 
