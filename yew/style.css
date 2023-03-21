@@ -96,7 +96,6 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-items: left;
-	justify-content: space-between;
 }
 
 .requestbar {
@@ -187,16 +186,43 @@ body {
 	 background: rgb(186, 123, 6);
 }
 
-.responseinput {
+.req, .resp {
+	height: 100%;
+}
+
+.req .tabcontent {
+	height: 100%;
+}
+
+
+.resp .tabcontent {
+	height: 100%;
+}
+
+.respbody {
 	width: 100%;
-	height: 250px;
+	height: 100%;
 	background-color: rgb(3, 7, 13);
 	border: 0.5px solid gray;
 	color: white;
 	font-size: 15px;
 }
 
-.responseinput:focus {
+.respbody:focus {
+  outline: none;
+}
+
+
+.reqbody {
+	width: 100%;
+	height: 70%;
+	background-color: rgb(3, 7, 13);
+	border: 0.5px solid gray;
+	color: white;
+	font-size: 15px;
+}
+
+.reqbody:focus {
   outline: none;
 }
 
@@ -204,7 +230,6 @@ body {
   display: flex;
 	flex-direction: row;
   width: 100%;
- 	margin-top: 10px;
 	margin-left: 10px;
 }
 
@@ -212,7 +237,7 @@ body {
   display: flex;
 	flex-direction: row;
   width: 100%;
- 	margin-top: 10px;
+ 	
 }
 
 .tab {
