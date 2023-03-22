@@ -1,6 +1,6 @@
 [package]
 name = "bolt-tauri"
-version = "0.1.0"
+version = "0.6.2"
 default-run = "bolt-tauri"
 edition = "2021"
 
