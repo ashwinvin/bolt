@@ -3,7 +3,7 @@ use yew::{html, Context, Html};
 
 use crate::BoltApp;
 
-pub fn get_main(_sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
+pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
     return html! {
         <body>
             <div class="navbar">
@@ -70,15 +70,47 @@ pub fn get_main(_sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                         </div>
 
                         <div class="reqtabs">
-                            <div class="tab pointer tabSelected">{"Body"}</div>
-                            <div class="tab pointer">{"Params"}</div>
-                            <div class="tab pointer">{"Headers"}</div>
+                            <div ref={sel.req_body_tab_ref.clone()} class="tab pointer tabSelected" onclick={ctx.link().callback(|_| Msg::ReqBodyPressed)}>{"Body"}</div>
+                            <div ref={sel.req_params_tab_ref.clone()} class="tab pointer" onclick={ctx.link().callback(|_| Msg::ReqParamsPressed)}>{"Params"}</div>
+                            <div ref={sel.req_headers_tab_ref.clone()} class="tab pointer" onclick={ctx.link().callback(|_| Msg::ReqHeadersPressed)}>{"Headers"}</div>
                         </div>
 
                         <div class="tabcontent">
-                            <textarea class="reqbody" placeholder="Request body">
+                            if sel.req_tab == 1 {
+                                <textarea class="reqbody" placeholder="Request body">
 
-                            </textarea>
+                                </textarea>
+                            } else if sel.req_tab == 2 {
+                                <table>
+                                    <tr>
+                                        <th>{"Key"}</th>
+                                        <th>{"Value"}</th>
+                                    </tr>
+                                    <tr>
+                                        <td>{"Key"}</td>
+                                        <td>{"Value"}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>{"Key"}</td>
+                                        <td>{"Value"}</td>
+                                    </tr>
+                                </table>
+                            } else if sel.req_tab == 3 {
+                                <table>
+                                    <tr>
+                                        <th>{"Key"}</th>
+                                        <th>{"Value"}</th>
+                                    </tr>
+                                    <tr>
+                                        <td>{"Key"}</td>
+                                        <td>{"Value"}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>{"Key"}</td>
+                                        <td>{"Value"}</td>
+                                    </tr>
+                                </table>
+                            }
                         </div>
                     </div>
 
@@ -86,8 +118,8 @@ pub fn get_main(_sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                     <div class="resp">
                         <div class="respline">
                             <div class="resptabs">
-                                <div class="tab pointer tabSelected">{"Body"}</div>
-                                <div class="tab pointer">{"Headers"}</div>
+                                <div ref={sel.resp_body_tab_ref.clone()} class="tab pointer tabSelected" onclick={ctx.link().callback(|_| Msg::RespBodyPressed)}>{"Body"}</div>
+                                <div ref={sel.resp_headers_tab_ref.clone()} class="tab pointer" onclick={ctx.link().callback(|_| Msg::RespHeadersPressed)}>{"Headers"}</div>
                             </div>
 
                             <div class="respstats">
@@ -98,9 +130,26 @@ pub fn get_main(_sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                         </div>
 
                         <div class="tabcontent">
-                            <textarea id="respbody" class="respbody" placeholder="Response body" readonly=true>
+                            if sel.resp_tab == 1 {
+                                <textarea id="respbody" class="respbody" placeholder="Response body" readonly=true>
 
-                            </textarea>
+                                </textarea>
+                            } else if sel.resp_tab == 2 {
+                                <table>
+                                    <tr>
+                                        <th>{"Key"}</th>
+                                        <th>{"Value"}</th>
+                                    </tr>
+                                    <tr>
+                                        <td>{"Key"}</td>
+                                        <td>{"Value"}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>{"Key"}</td>
+                                        <td>{"Value"}</td>
+                                    </tr>
+                                </table>
+                            }
                         </div>
                     </div>
                 </div>
