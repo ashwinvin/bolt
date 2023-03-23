@@ -117,8 +117,14 @@ Bolt is the ultimate HTTP API client, memory safe 🔐, crafted with Rust's 🦀
 ---
 
 ## Road Map 🚧
- * [x] Done
- * [ ] Not Done
+ * [x] Http Request
+ * [ ] Save Request Example
+ * [ ] Web
+ * [ ] Tabs Support
+ * [ ] Collection
+ * [ ] Generate Docs
+ * [ ] todos.iter().chain(&others).map(|&others|others).collect();; 
+ <!-- * [ ] [&others[..]].concat(); -->
 
 <a name="building-with-gitpod"></a>
 ## Building with Gitpod 💣
