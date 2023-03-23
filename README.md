@@ -19,7 +19,7 @@ Bolt is the ultimate HTTP API client, memory safe 🔐, crafted with Rust's nati
 > 
 > * Make sure you have [rust](https://www.rust-lang.org/tools/install) installed.
 > 
-> * Also make sure to follow [CONTRIBUTING guidelines](https://github.com/hiro-codes/bolt/blob/main/CONTRIBUTING.md)
+> * Also make sure to follow [CONTRIBUTING guidelines](https://github.com/hiro-codes/bolt/blob/master/CONTRIBUTING.md)
 
 **Clone Repository**
 > ``` bash
