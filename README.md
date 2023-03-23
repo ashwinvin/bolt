@@ -9,8 +9,8 @@ Bolt is a desktop application that is designed to make the process of developing
 
 > ⚠️ Prerequisites
 > 
-> * [rust](https://www.rust-lang.org/tools/install)
-> * [make](https://www.gnu.org/software/make/#download)
+> * [Rust](https://www.rust-lang.org/tools/install)
+> * [Make](https://www.gnu.org/software/make/#download)
 
 ```bash
 git clone https://github.com/hiro-codes/bolt
