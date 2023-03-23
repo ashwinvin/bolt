@@ -17,7 +17,7 @@ Native light, optimized and memory safe http api client written in rust.
 > ```
 
 > ``` bash
-> make setup # install required dependencies.
+> make setup # install requizred dependencies.
 > ```
 
 > ``` bash
