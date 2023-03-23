@@ -9,7 +9,9 @@
 
 # Bolt
 
-Native light ✨, optimized 🛠 and memory safe 🔐 http api client written in rust.
+<!-- Native light ✨, optimized 🛠 and memory safe 🔐 http api client written in rust. -->
+
+Bolt is the ultimate HTTP API client, memory safe 🔐, crafted with Rust's native power 💪 and optimized 🛠 for lightning-fast performance ✨, all while ensuring your data stays secure. Experience the seamless simplicity and safety of Bolt 🛡.
 
 ## Quick start 👩‍💻
 
