@@ -7,7 +7,14 @@ export function bolt_log(log) {
 };
 
 export function send_request(url, method) {
+  run()
+
   invoke('send_request', { url: url, method: method })
+}
+
+// TODO: implement JS to RS call
+function run() {
+
 }
 
 export function get_method() {
@@ -51,5 +58,4 @@ await listen('receive_response', (event) => {
   set_status(event.payload.status);
   set_time(event.payload.time);
   set_size(event.payload.size);
-  // yew_func()
 })
