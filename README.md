@@ -66,7 +66,7 @@ Bolt is the ultimate HTTP API client, memory safe 🔐, crafted with Rust's 🦀
 
 ## Quick start 👩‍💻
 
-> ⚠️Prerequisites
+> ⚠️ Prerequisites
 > 
 > * Make sure you have [rust](https://www.rust-lang.org/tools/install) installed.
 > 
