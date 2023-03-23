@@ -5,7 +5,6 @@ all: build
 setup:
 	cargo install tauri-cli
 	cargo install trunk
-	cargo install http-server
 	rustup target add wasm32-unknown-unknown
 
 
