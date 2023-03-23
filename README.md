@@ -2,7 +2,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub top language](https://img.shields.io/github/languages/top/hiro-codes/bolt)](https://github.com/hiro-codes/bolt/search?l=rust)
 
-# Bolt
+# Bolt ⚡
 Bolt is a desktop application that is designed to make the process of developing and testing APIs easier and more efficient.
 
 ## Quick start 👩‍💻
