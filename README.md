@@ -6,6 +6,8 @@
   - [Quick start 👩‍💻](#quick-start-)
   - [Walk through 🚶🏻](#walk-through-)
     - [Modules 🧩](#modules-)
+  - [Road Map 🚧](#road-map-)
+  - [Building with Gitpod 💣](#building-with-gitpod-)
   - [Our Contributors ✨](#our-contributors-)
   - [Support ⭐](#support-)
 
@@ -112,7 +114,11 @@ Bolt is the ultimate HTTP API client, memory safe 🔐, crafted with Rust's 🦀
 * #### ***Yew***:
     This module is responsible for building the bolt user interface using Rust, HTML, CSS, and JavaScript. It allows you to create a responsive and dynamic front-end that can interact with the user and display information. Once the front-end is built, it is given to Tauri.
 
-<!-- ---
+---
+
+## Road Map 🚧
+ * [x] Done
+ * [ ] Not Done
 
 <a name="building-with-gitpod"></a>
 ## Building with Gitpod 💣
@@ -122,7 +128,7 @@ and the website will be built in one single click. No extra setup is required.
 
 [![Gitpod Ready-to-Code](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/hiro-codes/bolt)
 
---- -->
+---
 
 ## Our Contributors ✨
 
@@ -133,6 +139,7 @@ and the website will be built in one single click. No extra setup is required.
 <!-- ## License 📝 -->
 
 ## Support ⭐
+
 _We greatly appreciate your interest in our project! If you would like to contribute, we welcome any and all feedback, bug reports, and pull requests. Additionally, leaving a star on our repository lets us know that our work is valuable to you and helps others discover our project. Thank you for your support!⭐_
 
 <a href="https://www.buymeacoffee.com/0xhiro" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
