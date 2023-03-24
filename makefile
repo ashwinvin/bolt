@@ -5,6 +5,8 @@ all: build
 setup:
 	cargo install tauri-cli
 	cargo install trunk
+	rustup target add wasm32-unknown-unknown
+
 
 build: build-yew build-tauri
 	cp -r ./tauri/target/release/bundle ./target
