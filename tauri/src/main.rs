@@ -1,11 +1,12 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use serde::{Deserialize, Serialize};
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::Window;
 
 // the payload type must implement `Serialize` and `Clone`.
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Serialize)]
 struct Payload {
     body: String,
 }
@@ -17,7 +18,7 @@ pub enum Method {
     NONE,
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Serialize)]
 struct HttpResponse {
     status: u16,
     body: String,
@@ -28,6 +29,11 @@ struct HttpResponse {
 #[tauri::command]
 fn bolt_log(log: &str) {
     println!("{}", log);
+}
+
+#[tauri::command]
+fn greet() {
+    println!("GREETING!!");
 }
 
 #[tauri::command]
@@ -101,7 +107,7 @@ fn http_send(url: &str, method: Method) -> HttpResponse {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![send_request, bolt_log])
+        .invoke_handler(tauri::generate_handler![greet, send_request, bolt_log])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
