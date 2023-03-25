@@ -1,10 +1,14 @@
 use crate::Msg;
+use stylist::yew::Global;
 use yew::{html, Context, Html};
 
 use crate::BoltApp;
 
 pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
     return html! {
+        <>
+        <Global css={sel.style.clone()} />
+
         <body>
             <div class="navbar">
                 <div class="logo">
@@ -161,5 +165,6 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
             </div>
 
         </body>
+        </>
     };
 }

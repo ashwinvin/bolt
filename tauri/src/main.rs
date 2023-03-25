@@ -1,8 +1,8 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use serde::{Deserialize, Serialize};
-use std::time::{SystemTime, UNIX_EPOCH};
+use serde::Serialize;
+use std::time::SystemTime;
 use tauri::Window;
 
 // the payload type must implement `Serialize` and `Clone`.
