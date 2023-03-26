@@ -95,74 +95,70 @@ pub fn get_url() -> String {
     return value;
 }
 
-pub fn switch_req_tab(sel: &BoltApp, index: u8) {
+pub fn switch_req_tab(index: u8) {
+    let window = web_sys::window().unwrap();
+    let doc = web_sys::Window::document(&window).unwrap();
+
+    let req_body_tab = web_sys::Document::get_element_by_id(&doc, "req_body_tab").unwrap();
+    let req_params_tab = web_sys::Document::get_element_by_id(&doc, "req_params_tab").unwrap();
+    let req_headers_tab = web_sys::Document::get_element_by_id(&doc, "req_headers_tab").unwrap();
+
     match index {
         1 => {
-            if let Some(div) = sel.req_body_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().add_1("tabSelected").unwrap();
-            }
+            req_body_tab.class_list().add_1("tabSelected").unwrap();
 
-            if let Some(div) = sel.req_params_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
+            req_params_tab.class_list().remove_1("tabSelected").unwrap();
 
-            if let Some(div) = sel.req_headers_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
+            req_headers_tab
+                .class_list()
+                .remove_1("tabSelected")
+                .unwrap();
         }
 
         2 => {
-            if let Some(div) = sel.req_body_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
+            req_body_tab.class_list().remove_1("tabSelected").unwrap();
 
-            if let Some(div) = sel.req_params_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().add_1("tabSelected").unwrap();
-            }
+            req_params_tab.class_list().add_1("tabSelected").unwrap();
 
-            if let Some(div) = sel.req_headers_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
+            req_headers_tab
+                .class_list()
+                .remove_1("tabSelected")
+                .unwrap();
         }
 
         3 => {
-            if let Some(div) = sel.req_body_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
+            req_body_tab.class_list().remove_1("tabSelected").unwrap();
 
-            if let Some(div) = sel.req_params_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
+            req_params_tab.class_list().remove_1("tabSelected").unwrap();
 
-            if let Some(div) = sel.req_headers_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().add_1("tabSelected").unwrap();
-            }
+            req_headers_tab.class_list().add_1("tabSelected").unwrap();
         }
 
         _ => {}
     }
 }
 
-pub fn switch_resp_tab(sel: &BoltApp, index: u8) {
+pub fn switch_resp_tab(index: u8) {
+    let window = web_sys::window().unwrap();
+    let doc = web_sys::Window::document(&window).unwrap();
+
+    let resp_body_tab = web_sys::Document::get_element_by_id(&doc, "resp_body_tab").unwrap();
+    let resp_headers_tab = web_sys::Document::get_element_by_id(&doc, "resp_headers_tab").unwrap();
+
     match index {
         1 => {
-            if let Some(div) = sel.resp_body_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().add_1("tabSelected").unwrap();
-            }
+            resp_body_tab.class_list().add_1("tabSelected").unwrap();
 
-            if let Some(div) = sel.resp_headers_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
+            resp_headers_tab
+                .class_list()
+                .remove_1("tabSelected")
+                .unwrap();
         }
 
         2 => {
-            if let Some(div) = sel.resp_body_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
+            resp_body_tab.class_list().remove_1("tabSelected").unwrap();
 
-            if let Some(div) = sel.resp_headers_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().add_1("tabSelected").unwrap();
-            }
+            resp_headers_tab.class_list().add_1("tabSelected").unwrap();
         }
 
         _ => {}
