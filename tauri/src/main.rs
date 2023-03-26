@@ -1,11 +1,12 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::time::{SystemTime, UNIX_EPOCH};
+use serde::Serialize;
+use std::time::SystemTime;
 use tauri::Window;
 
 // the payload type must implement `Serialize` and `Clone`.
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Serialize)]
 struct Payload {
     body: String,
 }
@@ -17,7 +18,7 @@ pub enum Method {
     NONE,
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Serialize)]
 struct HttpResponse {
     status: u16,
     body: String,
@@ -26,12 +27,16 @@ struct HttpResponse {
 }
 
 #[tauri::command]
-fn bolt_log(log: &str) {
+fn bolt_log(log: &str) -> String {
     println!("{}", log);
+
+    return "done".to_string();
 }
 
 #[tauri::command]
-fn send_request(window: Window, url: &str, method: &str) {
+fn send_request(window: Window, url: &str, method: &str) -> String {
+    bolt_log("Sending request");
+
     let mtd = match method {
         "post" => Method::POST,
         "get" => Method::GET,
@@ -39,21 +44,15 @@ fn send_request(window: Window, url: &str, method: &str) {
     };
 
     let url = url.to_string();
-    let _handle = std::thread::spawn(move || {
+    std::thread::spawn(move || {
         let resp: HttpResponse = http_send(&url, mtd);
 
-        window
-            .emit(
-                "receive_response",
-                HttpResponse {
-                    body: resp.body,
-                    size: resp.size,
-                    status: resp.status,
-                    time: resp.time,
-                },
-            )
-            .unwrap();
+        let resp = serde_json::to_string(&resp).unwrap();
+
+        window.emit("receive_response", resp).unwrap();
     });
+
+    return "done".to_string();
 }
 
 fn http_send(url: &str, method: Method) -> HttpResponse {

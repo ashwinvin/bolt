@@ -1,21 +1,16 @@
-use wasm_bindgen::prelude::*;
+use futures::stream::StreamExt;
+use serde::{Deserialize, Serialize};
+use stylist::StyleSource;
+use tauri_sys::tauri;
+use utils::*;
 use yew::{Component, Context, Html};
 
 mod html_sources;
-mod net;
+mod style;
+mod utils;
 
-#[wasm_bindgen(module = "/script.js")]
-extern "C" {
-    fn send_request(url: &str, method: &str);
-
-    fn get_method() -> String;
-
-    fn get_url() -> String;
-
-    fn set_respbody(content: &str);
-
-    fn bolt_log(log: &str);
-}
+// #[wasm_bindgen(module = "/script.js")]
+// extern "C" {}
 
 // Define the possible messages which can be sent to the component
 pub enum Msg {
@@ -36,6 +31,8 @@ pub enum Method {
 }
 
 pub struct BoltApp {
+    style: StyleSource,
+
     method: Method,
     _request: String,
     _response: String,
@@ -57,6 +54,8 @@ impl Component for BoltApp {
 
     fn create(_ctx: &Context<Self>) -> Self {
         Self {
+            style: style::get_styles(),
+
             method: Method::GET,
             _request: "http:".to_string(),
             _response: "the response".to_string(),
@@ -129,89 +128,43 @@ impl Component for BoltApp {
     }
 }
 
-fn switch_req_tab(sel: &BoltApp, index: u8) {
-    match index {
-        1 => {
-            if let Some(div) = sel.req_body_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().add_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.req_params_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.req_headers_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-        }
-
-        2 => {
-            if let Some(div) = sel.req_body_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.req_params_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().add_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.req_headers_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-        }
-
-        3 => {
-            if let Some(div) = sel.req_body_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.req_params_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.req_headers_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().add_1("tabSelected").unwrap();
-            }
-        }
-
-        _ => {}
-    }
-}
-
-fn switch_resp_tab(sel: &BoltApp, index: u8) {
-    match index {
-        1 => {
-            if let Some(div) = sel.resp_body_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().add_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.resp_headers_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-        }
-
-        2 => {
-            if let Some(div) = sel.resp_body_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.resp_headers_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().add_1("tabSelected").unwrap();
-            }
-        }
-
-        _ => {}
-    }
-}
-
 fn main() {
-    yew::Renderer::<BoltApp>::new().render();
-}
+    wasm_bindgen_futures::spawn_local(async move {
+        let mut events = tauri_sys::event::listen::<String>("receive_response")
+            .await
+            .expect("could not create response listener");
 
-#[wasm_bindgen]
-pub fn yew_func() {
-    bolt_log("yew was called!!");
+        while let Some(event) = events.next().await {
+            receive_response(&event.payload);
+        }
+    });
+
+    yew::Renderer::<BoltApp>::new().render();
 }
 
 fn send_pressed(url: &str, method: &str) {
     send_request(url, method);
+}
+
+fn send_request(url: &str, method: &str) {
+    #[derive(Serialize, Deserialize)]
+    struct Payload<'a> {
+        url: &'a str,
+        method: &'a str,
+    }
+
+    let url = url.to_string();
+    let method = method.to_string();
+
+    wasm_bindgen_futures::spawn_local(async move {
+        let _resp: String = tauri::invoke(
+            "send_request",
+            &Payload {
+                url: &url,
+                method: &method,
+            },
+        )
+        .await
+        .unwrap();
+    });
 }

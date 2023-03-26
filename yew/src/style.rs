@@ -1,4 +1,9 @@
-* {
+use stylist::css;
+
+pub fn get_styles() -> stylist::StyleSource {
+    return css!(
+        r#"
+        * {
 	margin: 0;
 }
 
@@ -292,4 +297,10 @@ th {
 
 td {
   border: 0.5px solid #ddd;
+}
+
+        
+        
+        "#
+    );
 }
