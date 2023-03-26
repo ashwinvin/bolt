@@ -27,17 +27,16 @@ struct HttpResponse {
 }
 
 #[tauri::command]
-fn bolt_log(log: &str) {
+fn bolt_log(log: &str) -> String {
     println!("{}", log);
+
+    return "done".to_string();
 }
 
 #[tauri::command]
-fn greet() {
-    println!("GREETING!!");
-}
+fn send_request(window: Window, url: &str, method: &str) -> String {
+    bolt_log("Sending request");
 
-#[tauri::command]
-fn send_request(window: Window, url: &str, method: &str) {
     let mtd = match method {
         "post" => Method::POST,
         "get" => Method::GET,
@@ -45,21 +44,15 @@ fn send_request(window: Window, url: &str, method: &str) {
     };
 
     let url = url.to_string();
-    let _handle = std::thread::spawn(move || {
+    std::thread::spawn(move || {
         let resp: HttpResponse = http_send(&url, mtd);
 
-        window
-            .emit(
-                "receive_response",
-                HttpResponse {
-                    body: resp.body,
-                    size: resp.size,
-                    status: resp.status,
-                    time: resp.time,
-                },
-            )
-            .unwrap();
+        let resp = serde_json::to_string(&resp).unwrap();
+
+        window.emit("receive_response", resp).unwrap();
     });
+
+    return "done".to_string();
 }
 
 fn http_send(url: &str, method: Method) -> HttpResponse {
@@ -107,7 +100,7 @@ fn http_send(url: &str, method: Method) -> HttpResponse {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, send_request, bolt_log])
+        .invoke_handler(tauri::generate_handler![send_request, bolt_log])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

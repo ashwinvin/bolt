@@ -3,15 +3,14 @@ use serde::{Deserialize, Serialize};
 use stylist::StyleSource;
 use tauri_sys::tauri;
 use utils::*;
-use wasm_bindgen::prelude::*;
 use yew::{Component, Context, Html};
 
 mod html_sources;
 mod style;
 mod utils;
 
-#[wasm_bindgen(module = "/script.js")]
-extern "C" {}
+// #[wasm_bindgen(module = "/script.js")]
+// extern "C" {}
 
 // Define the possible messages which can be sent to the component
 pub enum Msg {
@@ -129,80 +128,6 @@ impl Component for BoltApp {
     }
 }
 
-fn switch_req_tab(sel: &BoltApp, index: u8) {
-    match index {
-        1 => {
-            if let Some(div) = sel.req_body_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().add_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.req_params_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.req_headers_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-        }
-
-        2 => {
-            if let Some(div) = sel.req_body_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.req_params_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().add_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.req_headers_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-        }
-
-        3 => {
-            if let Some(div) = sel.req_body_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.req_params_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.req_headers_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().add_1("tabSelected").unwrap();
-            }
-        }
-
-        _ => {}
-    }
-}
-
-fn switch_resp_tab(sel: &BoltApp, index: u8) {
-    match index {
-        1 => {
-            if let Some(div) = sel.resp_body_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().add_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.resp_headers_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-        }
-
-        2 => {
-            if let Some(div) = sel.resp_body_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().remove_1("tabSelected").unwrap();
-            }
-
-            if let Some(div) = sel.resp_headers_tab_ref.cast::<web_sys::HtmlElement>() {
-                div.class_list().add_1("tabSelected").unwrap();
-            }
-        }
-
-        _ => {}
-    }
-}
-
 fn main() {
     wasm_bindgen_futures::spawn_local(async move {
         let mut events = tauri_sys::event::listen::<String>("receive_response")
@@ -210,20 +135,11 @@ fn main() {
             .expect("could not create response listener");
 
         while let Some(event) = events.next().await {
-            bolt_log("yew has gotten event");
-
-            bolt_log(&format!("{}", &event.payload));
-
             receive_response(&event.payload);
         }
     });
 
     yew::Renderer::<BoltApp>::new().render();
-}
-
-#[wasm_bindgen]
-pub fn yew_func() {
-    bolt_log("yew was called!!");
 }
 
 fn send_pressed(url: &str, method: &str) {
@@ -241,7 +157,7 @@ fn send_request(url: &str, method: &str) {
     let method = method.to_string();
 
     wasm_bindgen_futures::spawn_local(async move {
-        let new_msg: String = tauri::invoke(
+        let _resp: String = tauri::invoke(
             "send_request",
             &Payload {
                 url: &url,
@@ -250,7 +166,5 @@ fn send_request(url: &str, method: &str) {
         )
         .await
         .unwrap();
-
-        println!("{}", new_msg);
     });
 }

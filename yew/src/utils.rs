@@ -1,3 +1,4 @@
+use crate::BoltApp;
 use serde::{Deserialize, Serialize};
 use tauri_sys::tauri;
 use wasm_bindgen::prelude::*;
@@ -11,11 +12,9 @@ pub fn bolt_log(log: &str) {
     let log = log.to_string();
 
     wasm_bindgen_futures::spawn_local(async move {
-        let new_msg: String = tauri::invoke("bolt_log", &Payload { log: &log })
+        let _resp: String = tauri::invoke("bolt_log", &Payload { log: &log })
             .await
             .unwrap();
-
-        println!("{}", new_msg);
     });
 }
 
@@ -94,4 +93,78 @@ pub fn get_url() -> String {
     let value = input.value();
 
     return value;
+}
+
+pub fn switch_req_tab(sel: &BoltApp, index: u8) {
+    match index {
+        1 => {
+            if let Some(div) = sel.req_body_tab_ref.cast::<web_sys::HtmlElement>() {
+                div.class_list().add_1("tabSelected").unwrap();
+            }
+
+            if let Some(div) = sel.req_params_tab_ref.cast::<web_sys::HtmlElement>() {
+                div.class_list().remove_1("tabSelected").unwrap();
+            }
+
+            if let Some(div) = sel.req_headers_tab_ref.cast::<web_sys::HtmlElement>() {
+                div.class_list().remove_1("tabSelected").unwrap();
+            }
+        }
+
+        2 => {
+            if let Some(div) = sel.req_body_tab_ref.cast::<web_sys::HtmlElement>() {
+                div.class_list().remove_1("tabSelected").unwrap();
+            }
+
+            if let Some(div) = sel.req_params_tab_ref.cast::<web_sys::HtmlElement>() {
+                div.class_list().add_1("tabSelected").unwrap();
+            }
+
+            if let Some(div) = sel.req_headers_tab_ref.cast::<web_sys::HtmlElement>() {
+                div.class_list().remove_1("tabSelected").unwrap();
+            }
+        }
+
+        3 => {
+            if let Some(div) = sel.req_body_tab_ref.cast::<web_sys::HtmlElement>() {
+                div.class_list().remove_1("tabSelected").unwrap();
+            }
+
+            if let Some(div) = sel.req_params_tab_ref.cast::<web_sys::HtmlElement>() {
+                div.class_list().remove_1("tabSelected").unwrap();
+            }
+
+            if let Some(div) = sel.req_headers_tab_ref.cast::<web_sys::HtmlElement>() {
+                div.class_list().add_1("tabSelected").unwrap();
+            }
+        }
+
+        _ => {}
+    }
+}
+
+pub fn switch_resp_tab(sel: &BoltApp, index: u8) {
+    match index {
+        1 => {
+            if let Some(div) = sel.resp_body_tab_ref.cast::<web_sys::HtmlElement>() {
+                div.class_list().add_1("tabSelected").unwrap();
+            }
+
+            if let Some(div) = sel.resp_headers_tab_ref.cast::<web_sys::HtmlElement>() {
+                div.class_list().remove_1("tabSelected").unwrap();
+            }
+        }
+
+        2 => {
+            if let Some(div) = sel.resp_body_tab_ref.cast::<web_sys::HtmlElement>() {
+                div.class_list().remove_1("tabSelected").unwrap();
+            }
+
+            if let Some(div) = sel.resp_headers_tab_ref.cast::<web_sys::HtmlElement>() {
+                div.class_list().add_1("tabSelected").unwrap();
+            }
+        }
+
+        _ => {}
+    }
 }

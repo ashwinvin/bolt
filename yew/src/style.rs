@@ -1,4 +1,4 @@
-use stylist::{css, Style};
+use stylist::css;
 
 pub fn get_styles() -> stylist::StyleSource {
     return css!(
