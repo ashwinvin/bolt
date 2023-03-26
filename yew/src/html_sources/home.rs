@@ -74,9 +74,9 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                         </div>
 
                         <div class="reqtabs">
-                            <div ref={sel.req_body_tab_ref.clone()} class="tab pointer tabSelected" onclick={ctx.link().callback(|_| Msg::ReqBodyPressed)}>{"Body"}</div>
-                            <div ref={sel.req_params_tab_ref.clone()} class="tab pointer" onclick={ctx.link().callback(|_| Msg::ReqParamsPressed)}>{"Params"}</div>
-                            <div ref={sel.req_headers_tab_ref.clone()} class="tab pointer" onclick={ctx.link().callback(|_| Msg::ReqHeadersPressed)}>{"Headers"}</div>
+                            <div id="req_body_tab" class=" tab pointer tabSelected" onclick={ctx.link().callback(|_| Msg::ReqBodyPressed)}>{"Body"}</div>
+                            <div id="req_params_tab" class=" tab pointer" onclick={ctx.link().callback(|_| Msg::ReqParamsPressed)}>{"Params"}</div>
+                            <div id="req_headers_tab" class=" tab pointer" onclick={ctx.link().callback(|_| Msg::ReqHeadersPressed)}>{"Headers"}</div>
                         </div>
 
                         <div class="tabcontent">
@@ -122,8 +122,8 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                     <div class="resp">
                         <div class="respline">
                             <div class="resptabs">
-                                <div ref={sel.resp_body_tab_ref.clone()} class="tab pointer tabSelected" onclick={ctx.link().callback(|_| Msg::RespBodyPressed)}>{"Body"}</div>
-                                <div ref={sel.resp_headers_tab_ref.clone()} class="tab pointer" onclick={ctx.link().callback(|_| Msg::RespHeadersPressed)}>{"Headers"}</div>
+                                <div id="resp_body_tab" class="tab pointer tabSelected" onclick={ctx.link().callback(|_| Msg::RespBodyPressed)}>{"Body"}</div>
+                                <div id="resp_headers_tab" class="tab pointer" onclick={ctx.link().callback(|_| Msg::RespHeadersPressed)}>{"Headers"}</div>
                             </div>
 
                             <div class="respstats">

@@ -34,18 +34,9 @@ pub struct BoltApp {
     style: StyleSource,
 
     method: Method,
-    _request: String,
-    _response: String,
 
     req_tab: u8,
     resp_tab: u8,
-
-    req_body_tab_ref: yew::NodeRef,
-    req_params_tab_ref: yew::NodeRef,
-    req_headers_tab_ref: yew::NodeRef,
-
-    resp_body_tab_ref: yew::NodeRef,
-    resp_headers_tab_ref: yew::NodeRef,
 }
 
 impl Component for BoltApp {
@@ -57,18 +48,9 @@ impl Component for BoltApp {
             style: style::get_styles(),
 
             method: Method::GET,
-            _request: "http:".to_string(),
-            _response: "the response".to_string(),
 
             req_tab: 1,
             resp_tab: 1,
-
-            req_body_tab_ref: yew::NodeRef::default(),
-            req_params_tab_ref: yew::NodeRef::default(),
-            req_headers_tab_ref: yew::NodeRef::default(),
-
-            resp_body_tab_ref: yew::NodeRef::default(),
-            resp_headers_tab_ref: yew::NodeRef::default(),
         }
     }
 
@@ -89,35 +71,35 @@ impl Component for BoltApp {
             Msg::ReqBodyPressed => {
                 self.req_tab = 1;
 
-                switch_req_tab(self, 1);
+                switch_req_tab(1);
                 return true;
             }
 
             Msg::ReqHeadersPressed => {
                 self.req_tab = 3;
 
-                switch_req_tab(self, 3);
+                switch_req_tab(3);
                 return true;
             }
 
             Msg::ReqParamsPressed => {
                 self.req_tab = 2;
 
-                switch_req_tab(self, 2);
+                switch_req_tab(2);
                 return true;
             }
 
             Msg::RespBodyPressed => {
                 self.resp_tab = 1;
 
-                switch_resp_tab(self, 1);
+                switch_resp_tab(1);
                 return true;
             }
 
             Msg::RespHeadersPressed => {
                 self.resp_tab = 2;
 
-                switch_resp_tab(self, 2);
+                switch_resp_tab(2);
                 return true;
             }
         }

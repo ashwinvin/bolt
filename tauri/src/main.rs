@@ -2,14 +2,9 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use serde::Serialize;
+use std::sync::{Arc, Mutex};
 use std::time::SystemTime;
 use tauri::Window;
-
-// the payload type must implement `Serialize` and `Clone`.
-#[derive(Clone, Serialize)]
-struct Payload {
-    body: String,
-}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Method {
@@ -26,9 +21,38 @@ struct HttpResponse {
     size: u64,
 }
 
+#[derive(Serialize)]
+struct AppState {
+    count: i32,
+    response: HttpResponse,
+}
+
+impl AppState {
+    fn new() -> Self {
+        Self {
+            count: 0,
+            response: HttpResponse {
+                status: 0,
+                body: String::new(),
+                time: 0,
+                size: 0,
+            },
+        }
+    }
+}
+
+// Create a shared global state variable
+lazy_static::lazy_static! {
+    static ref GLOBAL_STATE: Arc<Mutex<AppState>> = Arc::new(Mutex::new(AppState::new()));
+}
+
 #[tauri::command]
 fn bolt_log(log: &str) -> String {
     println!("{}", log);
+
+    let mut state = GLOBAL_STATE.lock().unwrap();
+    state.count += 1;
+    println!("count is {}", state.count);
 
     return "done".to_string();
 }
