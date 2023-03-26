@@ -28,7 +28,6 @@ name = "bolt-yew"
 version = "0.6.2"
 dependencies = [
  "futures",
- "js-sys",
  "serde",
  "serde_json",
  "stylist",
@@ -742,7 +741,7 @@ dependencies = [
 [[package]]
 name = "tauri-sys"
 version = "0.1.0"
-source = "git+https://github.com/JonasKruckenberg/tauri-sys#904450cffe9687fdd4c5163077550edffa650a68"
+source = "git+https://github.com/hiro-codes/tauri-sys#904450cffe9687fdd4c5163077550edffa650a68"
 dependencies = [
  "futures",
  "js-sys",

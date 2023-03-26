@@ -37,20 +37,20 @@ pub fn receive_response(data: &str) {
     set_size(response.size);
 }
 
-pub fn set_size(code: u64) {
+pub fn set_size(size: u64) {
     let window = web_sys::window().unwrap();
     let doc = web_sys::Window::document(&window).unwrap();
     let div = web_sys::Document::get_element_by_id(&doc, "size").unwrap();
 
-    div.set_inner_html(&code.to_string());
+    div.set_inner_html(&("Size: ".to_string() + &size.to_string() + " B"));
 }
 
-pub fn set_time(code: u32) {
+pub fn set_time(time: u32) {
     let window = web_sys::window().unwrap();
     let doc = web_sys::Window::document(&window).unwrap();
     let div = web_sys::Document::get_element_by_id(&doc, "time").unwrap();
 
-    div.set_inner_html(&code.to_string());
+    div.set_inner_html(&("Time: ".to_string() + &time.to_string() + " ms"));
 }
 
 pub fn set_status(code: u16) {
@@ -58,7 +58,7 @@ pub fn set_status(code: u16) {
     let doc = web_sys::Window::document(&window).unwrap();
     let div = web_sys::Document::get_element_by_id(&doc, "status").unwrap();
 
-    div.set_inner_html(&code.to_string());
+    div.set_inner_html(&("Status: ".to_string() + &code.to_string()));
 }
 
 pub fn set_resp_body(content: String) {
