@@ -1,10 +1,13 @@
 use crate::Msg;
+use crate::GLOBAL_STATE;
 use stylist::yew::Global;
 use yew::{html, Context, Html};
 
 use crate::BoltApp;
 
 pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
+    let state = GLOBAL_STATE.lock().unwrap();
+
     return html! {
         <>
         <Global css={sel.style.clone()} />
@@ -80,11 +83,11 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                         </div>
 
                         <div class="tabcontent">
-                            if sel.req_tab == 1 {
+                            if state.req_tab == 1 {
                                 <textarea class="reqbody" placeholder="Request body">
 
                                 </textarea>
-                            } else if sel.req_tab == 2 {
+                            } else if state.req_tab == 2 {
                                 <table>
                                     <tr>
                                         <th>{"Key"}</th>
@@ -99,7 +102,7 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                                         <td>{"Value"}</td>
                                     </tr>
                                 </table>
-                            } else if sel.req_tab == 3 {
+                            } else if state.req_tab == 3 {
                                 <table>
                                     <tr>
                                         <th>{"Key"}</th>
@@ -134,25 +137,24 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                         </div>
 
                         <div class="tabcontent">
-                            if sel.resp_tab == 1 {
-                                <textarea id="respbody" class="respbody" placeholder="Response body" readonly=true>
+                            if state.resp_tab == 1 {
+                                <textarea id="respbody" class="respbody" value={state.response.body.clone()} placeholder="Response body" readonly=true>
 
                                 </textarea>
-                            } else if sel.resp_tab == 2 {
+                            } else if state.resp_tab == 2 {
+                                <div class="respheaders">
                                 <table>
                                     <tr>
                                         <th>{"Key"}</th>
                                         <th>{"Value"}</th>
                                     </tr>
-                                    <tr>
-                                        <td>{"Key"}</td>
-                                        <td>{"Value"}</td>
-                                    </tr>
+                                     { for state.response.headers.iter().map(|header| sel.render_header(&header[0], &header[1])) }
                                     <tr>
                                         <td>{"Key"}</td>
                                         <td>{"Value"}</td>
                                     </tr>
                                 </table>
+                                </div>
                             }
                         </div>
                     </div>

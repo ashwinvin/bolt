@@ -1,4 +1,3 @@
-use crate::BoltApp;
 use serde::{Deserialize, Serialize};
 use tauri_sys::tauri;
 use wasm_bindgen::prelude::*;
@@ -16,25 +15,6 @@ pub fn bolt_log(log: &str) {
             .await
             .unwrap();
     });
-}
-
-pub fn receive_response(data: &str) {
-    bolt_log("received a response");
-
-    #[derive(Serialize, Deserialize)]
-    struct Payload {
-        status: u16,
-        body: String,
-        time: u32,
-        size: u64,
-    }
-
-    let response: Payload = serde_json::from_str(data).unwrap();
-
-    set_resp_body(response.body);
-    set_status(response.status);
-    set_time(response.time);
-    set_size(response.size);
 }
 
 pub fn set_size(size: u64) {
