@@ -19,7 +19,6 @@ watch:
 
 build-yew:
 	cd yew && trunk build -d ../tauri/dist --filehash false
-	cd yew && cp ./script.js ../tauri/dist 
 
 build-tauri:
 	cd tauri && cargo tauri build

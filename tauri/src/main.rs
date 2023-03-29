@@ -17,23 +17,23 @@ pub enum Method {
 struct HttpResponse {
     status: u16,
     body: String,
+    headers: Vec<Vec<String>>,
     time: u32,
     size: u64,
 }
 
 #[derive(Serialize)]
 struct AppState {
-    count: i32,
     response: HttpResponse,
 }
 
 impl AppState {
     fn new() -> Self {
         Self {
-            count: 0,
             response: HttpResponse {
                 status: 0,
                 body: String::new(),
+                headers: Vec::new(),
                 time: 0,
                 size: 0,
             },
@@ -49,10 +49,6 @@ lazy_static::lazy_static! {
 #[tauri::command]
 fn bolt_log(log: &str) -> String {
     println!("{}", log);
-
-    let mut state = GLOBAL_STATE.lock().unwrap();
-    state.count += 1;
-    println!("count is {}", state.count);
 
     return "done".to_string();
 }
@@ -83,6 +79,7 @@ fn http_send(url: &str, method: Method) -> HttpResponse {
     let mut resp = HttpResponse {
         status: 0,
         body: String::new(),
+        headers: Vec::new(),
         time: 0,
         size: 0,
     };
@@ -93,12 +90,13 @@ fn http_send(url: &str, method: Method) -> HttpResponse {
             let response = reqwest::blocking::get(url).unwrap();
             let end = get_timestamp();
 
+            let headers = extract_headers(response.headers());
+
             resp.status = response.status().as_u16();
             resp.time = (end - start) as u32;
             resp.body = response.text().unwrap();
+            resp.headers = headers;
             resp.size = resp.body.len() as u64;
-
-            return resp;
         }
 
         Method::POST => {
@@ -108,18 +106,39 @@ fn http_send(url: &str, method: Method) -> HttpResponse {
             let response = client.post(url).send().unwrap();
             let end = get_timestamp();
 
+            let headers = extract_headers(response.headers());
+
             resp.status = response.status().as_u16();
             resp.time = (end - start) as u32;
             resp.body = response.text().unwrap();
+            resp.headers = headers;
             resp.size = resp.body.len() as u64;
-
-            return resp;
         }
 
         Method::NONE => {
             panic!("Invalid method");
         }
     }
+
+    let mut state = GLOBAL_STATE.lock().unwrap();
+    state.response = resp.clone();
+
+    return resp;
+}
+
+fn extract_headers(map: &reqwest::header::HeaderMap) -> Vec<Vec<String>> {
+    let mut headers: Vec<Vec<String>> = Vec::new();
+
+    for (key, value) in map.iter() {
+        let mut header: Vec<String> = Vec::new();
+
+        header.push(key.to_string());
+        header.push(value.to_str().unwrap().to_string());
+
+        headers.push(header);
+    }
+
+    return headers;
 }
 
 fn main() {

@@ -3,7 +3,7 @@ use stylist::css;
 pub fn get_styles() -> stylist::StyleSource {
     return css!(
         r#"
-        * {
+* {
 	margin: 0;
 }
 
@@ -202,6 +202,11 @@ body {
 	height: 100%;
 }
 
+.respheaders {
+	height: 200px;
+	overflow: scroll;
+}
+
 .respbody {
 	width: 100%;
 	height: 100%;
@@ -298,9 +303,7 @@ th {
 td {
   border: 0.5px solid #ddd;
 }
-
-        
-        
-        "#
+    
+"#
     );
 }
