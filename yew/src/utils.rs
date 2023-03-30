@@ -75,6 +75,30 @@ pub fn get_url() -> String {
     return value;
 }
 
+pub fn get_body() -> String {
+    let window = web_sys::window().unwrap();
+    let doc = web_sys::Window::document(&window).unwrap();
+    let div = web_sys::Document::get_element_by_id(&doc, "reqbody").unwrap();
+
+    let input = div.dyn_into::<web_sys::HtmlTextAreaElement>().unwrap();
+
+    let value = input.value();
+
+    return value;
+}
+
+pub fn get_headers() -> Vec<Vec<String>> {
+    // let window = web_sys::window().unwrap();
+    // let doc = web_sys::Window::document(&window).unwrap();
+    // let div = web_sys::Document::get_element_by_id(&doc, "urlinput").unwrap();
+
+    // let input = div.dyn_into::<web_sys::HtmlInputElement>().unwrap();
+
+    // let value = input.value();
+
+    return Vec::new();
+}
+
 pub fn switch_req_tab(index: u8) {
     let window = web_sys::window().unwrap();
     let doc = web_sys::Window::document(&window).unwrap();

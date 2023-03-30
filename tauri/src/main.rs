@@ -1,12 +1,12 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
 use std::time::SystemTime;
 use tauri::Window;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
 pub enum Method {
     GET,
     POST,
@@ -20,6 +20,14 @@ struct HttpResponse {
     headers: Vec<Vec<String>>,
     time: u32,
     size: u64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct HttpRequest {
+    url: String,
+    method: Method,
+    body: String,
+    headers: Vec<Vec<String>>,
 }
 
 #[derive(Serialize)]
@@ -54,18 +62,24 @@ fn bolt_log(log: &str) -> String {
 }
 
 #[tauri::command]
-fn send_request(window: Window, url: &str, method: &str) -> String {
+fn send_request(window: Window, url: String, method: String, body: String) -> String {
     bolt_log("Sending request");
 
-    let mtd = match method {
+    let mtd = match method.as_str() {
         "post" => Method::POST,
         "get" => Method::GET,
         &_ => Method::NONE,
     };
 
-    let url = url.to_string();
+    let req = HttpRequest {
+        url,
+        method: mtd,
+        body,
+        headers: Vec::new(),
+    };
+
     std::thread::spawn(move || {
-        let resp: HttpResponse = http_send(&url, mtd);
+        let resp: HttpResponse = http_send(req);
 
         let resp = serde_json::to_string(&resp).unwrap();
 
@@ -75,7 +89,7 @@ fn send_request(window: Window, url: &str, method: &str) -> String {
     return "done".to_string();
 }
 
-fn http_send(url: &str, method: Method) -> HttpResponse {
+fn http_send(req: HttpRequest) -> HttpResponse {
     let mut resp = HttpResponse {
         status: 0,
         body: String::new(),
@@ -84,10 +98,12 @@ fn http_send(url: &str, method: Method) -> HttpResponse {
         size: 0,
     };
 
-    match method {
+    match req.method {
         Method::GET => {
+            let client = reqwest::blocking::Client::new();
+
             let start = get_timestamp();
-            let response = reqwest::blocking::get(url).unwrap();
+            let response = client.get(req.url).body(req.body).send().unwrap();
             let end = get_timestamp();
 
             let headers = extract_headers(response.headers());
@@ -103,7 +119,7 @@ fn http_send(url: &str, method: Method) -> HttpResponse {
             let client = reqwest::blocking::Client::new();
 
             let start = get_timestamp();
-            let response = client.post(url).send().unwrap();
+            let response = client.post(req.url).body(req.body).send().unwrap();
             let end = get_timestamp();
 
             let headers = extract_headers(response.headers());

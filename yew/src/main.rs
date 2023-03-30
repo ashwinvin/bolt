@@ -10,7 +10,7 @@ mod html_sources;
 mod style;
 mod utils;
 
-// https://randomuser.me/api
+// http://localhost:2000/ping
 
 // #[wasm_bindgen(module = "/script.js")]
 // extern "C" {}
@@ -106,7 +106,7 @@ impl Component for BoltApp {
             }
 
             Msg::SendPressed => {
-                send_pressed(&get_url(), &get_method());
+                send_pressed();
 
                 return true;
             }
@@ -182,30 +182,30 @@ fn main() {
     yew::Renderer::<BoltApp>::new().render();
 }
 
-fn send_pressed(url: &str, method: &str) {
-    send_request(url, method);
+fn send_pressed() {
+    send_request(get_url(), get_method(), get_body(), get_headers());
 }
 
-fn send_request(url: &str, method: &str) {
-    #[derive(Serialize, Deserialize)]
-    struct Payload<'a> {
-        url: &'a str,
-        method: &'a str,
+fn send_request(url: String, method: String, body: String, headers: Vec<Vec<String>>) {
+    #[derive(Debug, Serialize, Deserialize)]
+    struct Payload {
+        url: String,
+        method: String,
+        body: String,
+        headers: Vec<Vec<String>>,
     }
 
-    let url = url.to_string();
-    let method = method.to_string();
+    let payload = Payload {
+        url,
+        method,
+        body,
+        headers,
+    };
 
+    bolt_log(&format!("{:?}", payload));
+    
     wasm_bindgen_futures::spawn_local(async move {
-        let _resp: String = tauri::invoke(
-            "send_request",
-            &Payload {
-                url: &url,
-                method: &method,
-            },
-        )
-        .await
-        .unwrap();
+        let _resp: String = tauri::invoke("send_request", &payload).await.unwrap();
     });
 }
 
