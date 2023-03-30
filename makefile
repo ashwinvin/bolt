@@ -1,4 +1,4 @@
-.PHONY: build run setup all watch build-yew build-tauri watch-yew watch-tauri web clean-yew clean-tauri clean
+.PHONY: build run setup all api watch build-yew build-tauri watch-yew watch-tauri web clean-yew clean-tauri clean
 
 all: build
 
@@ -39,4 +39,6 @@ clean-tauri:
 	cd tauri && cargo clean
 
 clean: clean-yew clean-tauri
-	
+
+api:
+	cd api && cargo run

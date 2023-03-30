@@ -84,7 +84,7 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
 
                         <div class="tabcontent">
                             if state.req_tab == 1 {
-                                <textarea class="reqbody" placeholder="Request body">
+                                <textarea id="reqbody" class="reqbody" placeholder="Request body">
 
                                 </textarea>
                             } else if state.req_tab == 2 {
