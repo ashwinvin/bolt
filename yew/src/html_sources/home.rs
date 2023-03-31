@@ -141,7 +141,7 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                         <div class="tabcontent">
                             if state.resp_tab == 1 {
                                 <div id="respbody" class="respbody" >
-                                {state.response.body.highlight()}
+                                
                                 </div>
                             } else if state.resp_tab == 2 {
                                 <div class="respheaders">
@@ -151,10 +151,6 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                                         <th>{"Value"}</th>
                                     </tr>
                                      { for state.response.headers.iter().map(|header| sel.render_header(&header[0], &header[1])) }
-                                    <tr>
-                                        <td>{"Key"}</td>
-                                        <td>{"Value"}</td>
-                                    </tr>
                                 </table>
                                 </div>
                             }

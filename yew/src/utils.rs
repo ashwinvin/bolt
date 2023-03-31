@@ -51,6 +51,14 @@ pub fn set_resp_body(content: String) {
     text_area.set_value(&content);
 }
 
+pub fn set_html(id: &str, content: String) {
+    let window = web_sys::window().unwrap();
+    let doc = web_sys::Window::document(&window).unwrap();
+    let div = web_sys::Document::get_element_by_id(&doc, id).unwrap();
+
+    div.set_inner_html(&content);
+}
+
 pub fn get_method() -> String {
     let window = web_sys::window().unwrap();
     let doc = web_sys::Window::document(&window).unwrap();

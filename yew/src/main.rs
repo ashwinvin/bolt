@@ -7,10 +7,9 @@ use tauri_sys::tauri;
 use utils::*;
 use yew::{Component, Context, Html};
 
-use syntect::easy::HighlightLines;
-use syntect::highlighting::{Style, ThemeSet};
+use syntect::highlighting::ThemeSet;
+use syntect::html::highlighted_html_for_string;
 use syntect::parsing::SyntaxSet;
-use syntect::util::{as_24_bit_terminal_escaped, LinesWithEndings};
 
 mod html_sources;
 mod style;
@@ -49,7 +48,7 @@ pub struct BoltApp {
 #[derive(Clone, Serialize, Deserialize)]
 struct HttpResponse {
     status: u16,
-    body: CodeBlock,
+    body: String,
     headers: Vec<Vec<String>>,
     time: u32,
     size: u64,
@@ -77,10 +76,7 @@ impl AppState {
             count: 0,
             response: HttpResponse {
                 status: 0,
-                body: CodeBlock{
-                    language: "json".to_string(),
-                    code: "".to_string()
-                },
+                body: "the body".to_string(),
                 headers: Vec::new(),
                 time: 0,
                 size: 0,
@@ -225,49 +221,30 @@ pub fn receive_response(data: &str) {
 
     let mut response: HttpResponse = serde_json::from_str(data).unwrap();
 
-    // response.body = serde_json::to_string_pretty(&response.body).unwrap();
-
     let body = parse(&response.body).unwrap();
     let prettified = stringify_pretty(body, 4);
     response.body = prettified;
 
     // let agent = self.link.agent();
 
-    state.response = response.clone();
+    state.response = response;
 
-    set_resp_body(response.body);
-    set_status(response.status);
-    set_time(response.time);
-    set_size(response.size);
+    let syntax_set = SyntaxSet::load_defaults_newlines();
+    let theme_set = ThemeSet::load_defaults();
+    let syntax = syntax_set.find_syntax_by_extension("json").unwrap();
+
+    let html = highlighted_html_for_string(
+        &state.response.body,
+        &syntax_set,
+        &syntax,
+        &theme_set.themes["Solarized (dark)"],
+    )
+    .unwrap();
+
+    set_html("respbody", html);
+
+    set_status(state.response.status);
+    set_time(state.response.time);
+    set_size(state.response.size);
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-struct CodeBlock {
-    code: String,
-    language: String,
-}
-
-impl CodeBlock {
-    fn highlight(&self) -> Html {
-        let syntax_set = SyntaxSet::load_defaults_newlines();
-        let theme_set = ThemeSet::load_defaults();
-
-        let syntax = syntax_set
-            .find_syntax_by_name(&self.language)
-            .unwrap_or_else(|| syntax_set.find_syntax_plain_text());
-
-        let mut h = HighlightLines::new(syntax, &theme_set.themes["base16-ocean.dark"]);
-        let highlighted_lines = LinesWithEndings::from(&self.code).map(|line| {
-            let ranges: Vec<(Style, &str)> = h.highlight(line, &syntax_set);
-            as_24_bit_terminal_escaped(&ranges[..], true)
-        });
-
-        yew::html! {
-            <pre>
-                <code>
-                    { for highlighted_lines }
-                </code>
-            </pre>
-        }
-    }
-}
