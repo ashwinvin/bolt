@@ -94,12 +94,13 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                                         <th>{"Value"}</th>
                                     </tr>
                                     <tr>
-                                        <td>{"Key"}</td>
-                                        <td>{"Value"}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>{"Key"}</td>
-                                        <td>{"Value"}</td>
+                                        <td><input type="text" class="tableinput"/></td>
+                                        <td class="tableline">
+                                            <input type="text" class="tableinput"/>
+                                            <div class="pointer">
+                                                <svg viewBox="0 0 1024 1024" fill="currentColor" height="20px" width="20px" ><defs><style /></defs><path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z" /><path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z" /></svg>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </table>
                             } else if state.req_tab == 3 {
@@ -109,12 +110,13 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                                         <th>{"Value"}</th>
                                     </tr>
                                     <tr>
-                                        <td>{"Key"}</td>
-                                        <td>{"Value"}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>{"Key"}</td>
-                                        <td>{"Value"}</td>
+                                        <td><input type="text" class="tableinput"/></td>
+                                        <td class="tableline">
+                                            <input type="text" class="tableinput"/>
+                                            <div class="pointer">
+                                                <svg viewBox="0 0 1024 1024" fill="currentColor" height="20px" width="20px" ><defs><style /></defs><path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z" /><path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z" /></svg>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </table>
                             }
@@ -138,9 +140,9 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
 
                         <div class="tabcontent">
                             if state.resp_tab == 1 {
-                                <textarea id="respbody" class="respbody" value={state.response.body.clone()} placeholder="Response body" readonly=true>
-
-                                </textarea>
+                                <div id="respbody" class="respbody" >
+                                {state.response.body.highlight()}
+                                </div>
                             } else if state.resp_tab == 2 {
                                 <div class="respheaders">
                                 <table>

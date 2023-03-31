@@ -303,6 +303,26 @@ th {
 td {
   border: 0.5px solid #ddd;
 }
+
+
+.tableline {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+		
+.tableinput {
+	width: 100%;
+	background: none;
+	color: white;
+	font-size: 13px;
+	border: 0.5px solid gray;			
+}
+
+.tableinput:focus {
+  outline: none;
+}
     
 "#
     );
