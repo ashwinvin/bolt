@@ -74,7 +74,7 @@ fn send_request(
     body: String,
     headers: Vec<Vec<String>>,
 ) -> String {
-    bolt_log("Sending request");
+    // bolt_log("Sending request");
 
     let req = HttpRequest {
         url,
