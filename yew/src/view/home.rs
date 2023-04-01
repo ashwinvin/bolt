@@ -1,8 +1,8 @@
+use crate::view;
 use crate::Msg;
 use crate::GLOBAL_STATE;
 use stylist::yew::Global;
 use yew::{html, Context, Html};
-use yew::prelude::*;
 
 use crate::BoltApp;
 
@@ -94,7 +94,7 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                                         <th>{"Key"}</th>
                                         <th>{"Value"}</th>
                                     </tr>
-                                    { for state.request.params.iter().enumerate().map(|(index, header)| sel.render_params(ctx, index, state.request.params.len(), &header[0], &header[1])) }
+                                    { for state.request.params.iter().enumerate().map(|(index, header)| view::param::render_params(ctx, index, state.request.params.len(), &header[0], &header[1])) }
                                 </table>
                             } else if state.req_tab == 3 {
                                 <table>
@@ -102,7 +102,7 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                                         <th>{"Header"}</th>
                                         <th>{"Value"}</th>
                                     </tr>
-                                    { for state.request.headers.iter().enumerate().map(|(index, header)| sel.render_reqheader(ctx, index, state.request.headers.len(), &header[0], &header[1])) }
+                                    { for state.request.headers.iter().enumerate().map(|(index, header)| view::header::render_reqheader(ctx, index, state.request.headers.len(), &header[0], &header[1])) }
                                 </table>
                             }
                         </div>
@@ -135,7 +135,7 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                                         <th>{"Key"}</th>
                                         <th>{"Value"}</th>
                                     </tr>
-                                     { for state.response.headers.iter().map(|header| sel.render_header(&header[0], &header[1])) }
+                                     { for state.response.headers.iter().map(|header| view::header::render_header(&header[0], &header[1])) }
                                 </table>
                                 </div>
                             }
