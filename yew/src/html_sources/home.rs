@@ -2,6 +2,7 @@ use crate::Msg;
 use crate::GLOBAL_STATE;
 use stylist::yew::Global;
 use yew::{html, Context, Html};
+use yew::prelude::*;
 
 use crate::BoltApp;
 
@@ -63,14 +64,14 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                     <div class="req">
                         <div class="requestbar">
                             <div class="">
-                                <select id="methodselect" class="methodselect pointer">
+                                <select id="methodselect" class="methodselect pointer" onchange={ctx.link().callback(|_| Msg::MethodChanged)}>
                                     <option value="get">{"GET"}</option>
                                     <option value="post">{"POST"}</option>
                                 </select>
                             </div>
 
                             <div>
-                                <input id="urlinput" class="urlinput" type="text" placeholder="http://" />
+                                <input id="urlinput" class="urlinput" type="text" value={state.request.url.clone()} placeholder="http://" onchange={ctx.link().callback(|_| Msg::UrlChanged)}/>
                             </div>
 
                             <button class="sendbtn pointer" type="button" onclick={ctx.link().callback(|_| Msg::SendPressed)}>{"Send"}</button>
@@ -84,7 +85,7 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
 
                         <div class="tabcontent">
                             if state.req_tab == 1 {
-                                <textarea id="reqbody" class="reqbody" placeholder="Request body">
+                                <textarea id="reqbody" class="reqbody" value={state.request.body.clone()} placeholder="Request body" onchange={ctx.link().callback(|_| Msg::BodyChanged)}>
 
                                 </textarea>
                             } else if state.req_tab == 2 {
@@ -93,29 +94,15 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                                         <th>{"Key"}</th>
                                         <th>{"Value"}</th>
                                     </tr>
-                                    <tr>
-                                        <td>{"Key"}</td>
-                                        <td>{"Value"}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>{"Key"}</td>
-                                        <td>{"Value"}</td>
-                                    </tr>
+                                    { for state.request.params.iter().enumerate().map(|(index, header)| sel.render_params(ctx, index, state.request.params.len(), &header[0], &header[1])) }
                                 </table>
                             } else if state.req_tab == 3 {
                                 <table>
                                     <tr>
-                                        <th>{"Key"}</th>
+                                        <th>{"Header"}</th>
                                         <th>{"Value"}</th>
                                     </tr>
-                                    <tr>
-                                        <td>{"Key"}</td>
-                                        <td>{"Value"}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>{"Key"}</td>
-                                        <td>{"Value"}</td>
-                                    </tr>
+                                    { for state.request.headers.iter().enumerate().map(|(index, header)| sel.render_reqheader(ctx, index, state.request.headers.len(), &header[0], &header[1])) }
                                 </table>
                             }
                         </div>
@@ -130,17 +117,17 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                             </div>
 
                             <div class="respstats">
-                                <div id="status" class="respstat">{"Status: 0"}</div>
-                                <div id="time" class="respstat">{"Time: 0ms"}</div>
-                                <div id="size" class="respstat">{"Size: 0B"}</div>
+                                <div id="status" class="respstat">{"Status: "} {state.response.status}</div>
+                                <div id="time" class="respstat">{"Time: "} {state.response.time} {" ms"}</div>
+                                <div id="size" class="respstat">{"Size: "} {state.response.size} {" B"}</div>
                             </div>
                         </div>
 
                         <div class="tabcontent">
                             if state.resp_tab == 1 {
-                                <textarea id="respbody" class="respbody" value={state.response.body.clone()} placeholder="Response body" readonly=true>
-
-                                </textarea>
+                                <div id="respbody" class="respbody" >
+                                 {state.response.body.clone()}
+                                </div>
                             } else if state.resp_tab == 2 {
                                 <div class="respheaders">
                                 <table>
@@ -149,10 +136,6 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                                         <th>{"Value"}</th>
                                     </tr>
                                      { for state.response.headers.iter().map(|header| sel.render_header(&header[0], &header[1])) }
-                                    <tr>
-                                        <td>{"Key"}</td>
-                                        <td>{"Value"}</td>
-                                    </tr>
                                 </table>
                                 </div>
                             }

@@ -62,20 +62,20 @@ fn bolt_log(log: &str) -> String {
 }
 
 #[tauri::command]
-fn send_request(window: Window, url: String, method: String, body: String) -> String {
+fn send_request(
+    window: Window,
+    url: String,
+    method: Method,
+    body: String,
+    headers: Vec<Vec<String>>,
+) -> String {
     bolt_log("Sending request");
-
-    let mtd = match method.as_str() {
-        "post" => Method::POST,
-        "get" => Method::GET,
-        &_ => Method::NONE,
-    };
 
     let req = HttpRequest {
         url,
-        method: mtd,
+        method,
         body,
-        headers: Vec::new(),
+        headers,
     };
 
     std::thread::spawn(move || {
@@ -98,12 +98,21 @@ fn http_send(req: HttpRequest) -> HttpResponse {
         size: 0,
     };
 
+    let client = reqwest::blocking::Client::new();
+
     match req.method {
         Method::GET => {
-            let client = reqwest::blocking::Client::new();
+            let mut request = client.get(req.url).body(req.body);
+
+            for h in req.headers {
+                if h[0] != "" && h[1] != "" {
+                    println!("{} : {}", h[0], h[1]);
+                    request = request.header(h[0].clone(), h[1].clone());
+                }
+            }
 
             let start = get_timestamp();
-            let response = client.get(req.url).body(req.body).send().unwrap();
+            let response = request.send().unwrap();
             let end = get_timestamp();
 
             let headers = extract_headers(response.headers());
@@ -116,10 +125,17 @@ fn http_send(req: HttpRequest) -> HttpResponse {
         }
 
         Method::POST => {
-            let client = reqwest::blocking::Client::new();
+            let mut request = client.post(req.url).body(req.body);
+
+            for h in req.headers {
+                if h[0] != "" && h[1] != "" {
+                    println!("{} : {}", h[0], h[1]);
+                    request = request.header(h[0].clone(), h[1].clone());
+                }
+            }
 
             let start = get_timestamp();
-            let response = client.post(req.url).body(req.body).send().unwrap();
+            let response = request.send().unwrap();
             let end = get_timestamp();
 
             let headers = extract_headers(response.headers());

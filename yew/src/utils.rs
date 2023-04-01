@@ -1,3 +1,4 @@
+use crate::Method;
 use serde::{Deserialize, Serialize};
 use tauri_sys::tauri;
 use wasm_bindgen::prelude::*;
@@ -17,41 +18,15 @@ pub fn bolt_log(log: &str) {
     });
 }
 
-pub fn set_size(size: u64) {
+pub fn set_html(id: &str, content: String) {
     let window = web_sys::window().unwrap();
     let doc = web_sys::Window::document(&window).unwrap();
-    let div = web_sys::Document::get_element_by_id(&doc, "size").unwrap();
+    let div = web_sys::Document::get_element_by_id(&doc, id).unwrap();
 
-    div.set_inner_html(&("Size: ".to_string() + &size.to_string() + " B"));
+    div.set_inner_html(&content);
 }
 
-pub fn set_time(time: u32) {
-    let window = web_sys::window().unwrap();
-    let doc = web_sys::Window::document(&window).unwrap();
-    let div = web_sys::Document::get_element_by_id(&doc, "time").unwrap();
-
-    div.set_inner_html(&("Time: ".to_string() + &time.to_string() + " ms"));
-}
-
-pub fn set_status(code: u16) {
-    let window = web_sys::window().unwrap();
-    let doc = web_sys::Window::document(&window).unwrap();
-    let div = web_sys::Document::get_element_by_id(&doc, "status").unwrap();
-
-    div.set_inner_html(&("Status: ".to_string() + &code.to_string()));
-}
-
-pub fn set_resp_body(content: String) {
-    let window = web_sys::window().unwrap();
-    let doc = web_sys::Window::document(&window).unwrap();
-    let div = web_sys::Document::get_element_by_id(&doc, "respbody").unwrap();
-
-    let text_area = div.dyn_into::<web_sys::HtmlTextAreaElement>().unwrap();
-
-    text_area.set_value(&content);
-}
-
-pub fn get_method() -> String {
+pub fn get_method() -> Method {
     let window = web_sys::window().unwrap();
     let doc = web_sys::Window::document(&window).unwrap();
     let div = web_sys::Document::get_element_by_id(&doc, "methodselect").unwrap();
@@ -59,6 +34,15 @@ pub fn get_method() -> String {
     let select = div.dyn_into::<web_sys::HtmlSelectElement>().unwrap();
 
     let value = select.value();
+
+    let value = match value.as_str() {
+        "get" => Method::GET,
+        "post" => Method::POST,
+
+        _ => {
+            panic!("invalid method");
+        }
+    };
 
     return value;
 }
@@ -87,16 +71,25 @@ pub fn get_body() -> String {
     return value;
 }
 
-pub fn get_headers() -> Vec<Vec<String>> {
-    // let window = web_sys::window().unwrap();
-    // let doc = web_sys::Window::document(&window).unwrap();
-    // let div = web_sys::Document::get_element_by_id(&doc, "urlinput").unwrap();
+pub fn get_header(index: usize) -> Vec<String> {
+    let window = web_sys::window().unwrap();
+    let doc = web_sys::Window::document(&window).unwrap();
 
-    // let input = div.dyn_into::<web_sys::HtmlInputElement>().unwrap();
+    let key =
+        web_sys::Document::get_element_by_id(&doc, &("headerkey".to_string() + &index.to_string()))
+            .unwrap();
+    let value = web_sys::Document::get_element_by_id(
+        &doc,
+        &("headervalue".to_string() + &index.to_string()),
+    )
+    .unwrap();
 
-    // let value = input.value();
+    let key = key.dyn_into::<web_sys::HtmlInputElement>().unwrap();
+    let value = value.dyn_into::<web_sys::HtmlInputElement>().unwrap();
 
-    return Vec::new();
+    let result = vec![key.value(), value.value()];
+
+    return result;
 }
 
 pub fn switch_req_tab(index: u8) {
