@@ -18,6 +18,21 @@ pub fn bolt_log(log: &str) {
     });
 }
 
+pub fn bolt_panic(log: &str) {
+    #[derive(Serialize, Deserialize)]
+    struct Payload<'a> {
+        log: &'a str,
+    }
+
+    let log = log.to_string();
+
+    wasm_bindgen_futures::spawn_local(async move {
+        let _resp: String = tauri::invoke("bolt_panic", &Payload { log: &log })
+            .await
+            .unwrap();
+    });
+}
+
 pub fn set_html(id: &str, content: String) {
     let window = web_sys::window().unwrap();
     let doc = web_sys::Window::document(&window).unwrap();
@@ -40,7 +55,9 @@ pub fn get_method() -> Method {
         "post" => Method::POST,
 
         _ => {
-            panic!("invalid method");
+            bolt_panic("invalid method");
+
+            Method::GET
         }
     };
 
@@ -81,6 +98,27 @@ pub fn get_header(index: usize) -> Vec<String> {
     let value = web_sys::Document::get_element_by_id(
         &doc,
         &("headervalue".to_string() + &index.to_string()),
+    )
+    .unwrap();
+
+    let key = key.dyn_into::<web_sys::HtmlInputElement>().unwrap();
+    let value = value.dyn_into::<web_sys::HtmlInputElement>().unwrap();
+
+    let result = vec![key.value(), value.value()];
+
+    return result;
+}
+
+pub fn get_param(index: usize) -> Vec<String> {
+    let window = web_sys::window().unwrap();
+    let doc = web_sys::Window::document(&window).unwrap();
+
+    let key =
+        web_sys::Document::get_element_by_id(&doc, &("paramkey".to_string() + &index.to_string()))
+            .unwrap();
+    let value = web_sys::Document::get_element_by_id(
+        &doc,
+        &("paramvalue".to_string() + &index.to_string()),
     )
     .unwrap();
 

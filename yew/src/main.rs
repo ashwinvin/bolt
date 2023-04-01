@@ -1,11 +1,10 @@
 use futures::stream::StreamExt;
-use json::{parse, stringify_pretty};
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
 use stylist::StyleSource;
 use tauri_sys::tauri;
 use utils::*;
-use yew::{Component, Context, Html};
+use yew::{Component, Context, html::Scope, Html};
 
 use syntect::highlighting::ThemeSet;
 use syntect::html::highlighted_html_for_string;
@@ -17,7 +16,6 @@ mod utils;
 
 // http://localhost:2000/ping
 
-// TODO: Params
 // TODO: request tabs
 
 // #[wasm_bindgen(module = "/script.js")]
@@ -46,6 +44,9 @@ pub enum Msg {
     UrlChanged,
     BodyChanged,
     HeaderChanged(usize),
+    ParamChanged(usize),
+
+    Update
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy)]
@@ -59,7 +60,7 @@ pub struct BoltApp {
     style: StyleSource,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct Response {
     status: u16,
     body: String,
@@ -77,9 +78,9 @@ struct Request {
     method: Method,
 }
 
-#[derive(Serialize)]
 struct AppState {
-    // ctx: Option<BoltApp>,
+    link: Option<Scope<BoltApp>>,
+
     method: Method,
 
     request: Request,
@@ -89,10 +90,19 @@ struct AppState {
     resp_tab: u8,
 }
 
+unsafe impl Sync for BoltApp {}
+
+unsafe impl Send for BoltApp {}
+
+unsafe impl Sync for AppState {}
+
+unsafe impl Send for AppState {}
+
 impl AppState {
     fn new() -> Self {
         Self {
-            // ctx: None,
+            link: None,
+
             method: Method::GET,
 
             req_tab: 1,
@@ -100,15 +110,15 @@ impl AppState {
 
             request: Request {
                 url: "".to_string(),
-                body: "his body".to_string(),
-                headers: vec![vec!["first".to_string(), "second".to_string()]],
-                params: vec![vec!["first".to_string(), "second".to_string()]],
+                body: "".to_string(),
+                headers: vec![vec!["".to_string(), "".to_string()]],
+                params: vec![vec!["".to_string(), "".to_string()]],
                 method: Method::GET,
             },
 
             response: Response {
                 status: 0,
-                body: "the body".to_string(),
+                body: "Response body".to_string(),
                 headers: Vec::new(),
                 time: 0,
                 size: 0,
@@ -126,13 +136,15 @@ impl Component for BoltApp {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_ctx: &Context<Self>) -> Self {
+    fn create(ctx: &Context<Self>) -> Self {
+        let mut state = GLOBAL_STATE.lock().unwrap();
+        state.link = Some(ctx.link().clone());
+
         Self {
             style: style::get_styles(),
         }
     }
 
-    // TODO: auto update body, method, url on change
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Msg::SelectedMethod(meth) => {
@@ -240,7 +252,6 @@ impl Component for BoltApp {
                 let url = get_url();
 
                 let mut state = GLOBAL_STATE.lock().unwrap();
-                // state.request.url = parse_url(url, state.request.params.clone());
                 state.request.url = url;
 
                 return true;
@@ -260,6 +271,20 @@ impl Component for BoltApp {
 
                 let mut state = GLOBAL_STATE.lock().unwrap();
                 state.request.headers[index] = header;
+
+                return true;
+            }
+
+            Msg::ParamChanged(index) => {
+                let param = get_param(index);
+
+                let mut state = GLOBAL_STATE.lock().unwrap();
+                state.request.params[index] = param;
+
+                return true;
+            }
+
+            Msg::Update => {
 
                 return true;
             }
@@ -294,7 +319,7 @@ impl BoltApp {
                 <td><input id={"headerkey".to_string() + &index.to_string()} type="text" class="tableinput" value={key.to_string()} onchange={ctx.link().callback(move |_| Msg::HeaderChanged(index))}/></td>
                 <td class="tableline">
                     <input id={"headervalue".to_string() + &index.to_string()} type="text" class="tableinput" value={value.to_string()} onchange={ctx.link().callback(move |_| Msg::HeaderChanged(index))}/>
-                    if index == length - 1 {        
+                    if index == length - 1 {
                         <div class="pointer" onclick={ctx.link().callback(|_| Msg::AddHeader)}>
                             <svg viewBox="0 0 1024 1024" fill="currentColor" height="20px" width="20px" ><defs><style /></defs><path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z" /><path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z" /></svg>
                         </div>
@@ -306,7 +331,6 @@ impl BoltApp {
                 </td>
             </tr>
         }
-        
     }
 
     fn render_params(
@@ -317,30 +341,22 @@ impl BoltApp {
         key: &String,
         value: &String,
     ) -> Html {
-        if index == length - 1 {
-            yew::html! {
-                <tr>
-                    <td><input type="text" class="tableinput" value={key.to_string()}/></td>
-                    <td class="tableline">
-                        <input type="text" class="tableinput" value={value.to_string()}/>
+        yew::html! {
+            <tr>
+                <td><input id={"paramkey".to_string() + &index.to_string()} type="text" class="tableinput" value={key.to_string()} onchange={ctx.link().callback(move |_| Msg::ParamChanged(index))}/></td>
+                <td class="tableline">
+                    <input id={"paramvalue".to_string() + &index.to_string()} type="text" class="tableinput" value={value.to_string()} onchange={ctx.link().callback(move |_| Msg::ParamChanged(index))}/>
+                    if index == length - 1 {
                         <div class="pointer" onclick={ctx.link().callback(|_| Msg::AddParam)}>
                             <svg viewBox="0 0 1024 1024" fill="currentColor" height="20px" width="20px" ><defs><style /></defs><path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z" /><path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z" /></svg>
                         </div>
-                    </td>
-                </tr>
-            }
-        } else {
-            yew::html! {
-                <tr>
-                    <td><input type="text" class="tableinput" value={key.to_string()}/></td>
-                    <td class="tableline">
-                        <input type="text" class="tableinput" value={value.to_string()}/>
+                    }else {
                         <div class="pointer" onclick={ctx.link().callback(move |_| Msg::RemoveParam(index.clone()))}>
                             <svg viewBox="0 0 1024 1024" fill="currentColor" height="1em" width="1em"> <path d="M864 256H736v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zm-200 0H360v-72h304v72z" /> </svg>
                         </div>
-                    </td>
-                </tr>
-            }
+                    }
+                </td>
+            </tr>
         }
     }
 }
@@ -368,17 +384,17 @@ fn send_request(request: Request) {
     });
 }
 
-// TODO: have live url update on param change
 fn parse_url(url: String, params: Vec<Vec<String>>) -> String {
     let mut new_url = url;
 
-    if params.len() > 0 {
+    if params.len() > 0 && params[0][0] != "" {
         new_url.push_str("?");
     }
 
     for (i, param) in params.iter().enumerate() {
         if param[0] == "" || param[1] == "" {
-            panic!("Param at index {i} has empty field");
+            // bolt_panic("Param at index {i} has empty field");
+            continue;
         }
 
         new_url.push_str(&param[0]);
@@ -390,7 +406,7 @@ fn parse_url(url: String, params: Vec<Vec<String>>) -> String {
         }
     }
 
-    bolt_log(&format!("url is: {new_url}"));
+    // bolt_log(&format!("url is: {new_url}"));
     return new_url;
 }
 
@@ -401,23 +417,22 @@ pub fn receive_response(data: &str) {
 
     let mut response: Response = serde_json::from_str(data).unwrap();
 
-    // TODO: don't format or highlight without application/json header
-    let body = parse(&response.body).unwrap();
-    let prettified = stringify_pretty(body, 4);
-    response.body = prettified;
+    bolt_log(&format!("{:?}", response));
+
+    // FIXME: render body as html
+    response.body = highlight_body(&response.body);
 
     state.response = response;
 
-    // FIXME: render body as html
-    let body = highlight_body(&state.response.body);
-    state.response.body = body;
-
     // TODO: trigger message after receiving response
-    // let agent = self.link.agent();
+    let link = state.link.as_ref().unwrap();
+
+    link.send_message(Msg::Update);
 }
 
 // FIXME: remove background
 fn highlight_body(body: &String) -> String {
+    // Add syntax highlighting
     let syntax_set = SyntaxSet::load_defaults_newlines();
     let theme_set = ThemeSet::load_defaults();
     let syntax = syntax_set.find_syntax_by_extension("json").unwrap();
