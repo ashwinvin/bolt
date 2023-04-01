@@ -12,7 +12,11 @@ async fn ping(req: HttpRequest, body: String) -> HttpResponse {
 
     println!("Body: \n{body}");
 
-    println!("Headers: \n{:?}\n", req.headers());
+    println!("Headers: ");
+
+    for (key, value) in req.headers().iter() {
+        println!("{} => {}", key.as_str(), value.to_str().unwrap());
+    }
 
     println!("------------------------------------------------------");
 
@@ -25,18 +29,22 @@ async fn ping(req: HttpRequest, body: String) -> HttpResponse {
     return response;
 }
 
-#[actix_web::post("/req")]
-async fn reqq(req: HttpRequest, body: String) -> HttpResponse {
+#[actix_web::post("/ping2")]
+async fn ping2(req: HttpRequest, body: String) -> HttpResponse {
     println!("POST {}", req.uri());
 
     println!("Body: \n{body}");
 
-    println!("Headers: \n{:?}\n", req.headers());
+    println!("Headers: ");
+
+    for (key, value) in req.headers().iter() {
+        println!("{} => {}", key.as_str(), value.to_str().unwrap());
+    }
 
     println!("------------------------------------------------------");
 
     let body = Ping {
-        body: "resp".to_string(),
+        body: "pong 2".to_string(),
     };
 
     let response = HttpResponse::Ok().json(body);
@@ -58,7 +66,7 @@ async fn main() -> std::io::Result<()> {
     let app = HttpServer::new(|| {
         App::new()
             .service(ping)
-            .service(reqq)
+            .service(ping2)
             .default_service(web::post().to(e404))
     });
 
