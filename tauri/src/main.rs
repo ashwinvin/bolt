@@ -62,6 +62,11 @@ fn bolt_log(log: &str) -> String {
 }
 
 #[tauri::command]
+fn bolt_panic(log: &str) {
+    panic!("{}", log);
+}
+
+#[tauri::command]
 fn send_request(
     window: Window,
     url: String,
@@ -175,7 +180,7 @@ fn extract_headers(map: &reqwest::header::HeaderMap) -> Vec<Vec<String>> {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![send_request, bolt_log])
+        .invoke_handler(tauri::generate_handler![send_request, bolt_log, bolt_panic])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
