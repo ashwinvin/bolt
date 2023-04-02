@@ -1,7 +1,6 @@
+use crate::BoltApp;
 use crate::Msg;
 use yew::{html, Context, Html};
-
-use crate::BoltApp;
 
 pub fn render_header(key: &String, value: &String) -> Html {
     html! {
