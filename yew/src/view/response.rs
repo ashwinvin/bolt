@@ -2,7 +2,7 @@ use crate::view;
 use crate::BoltApp;
 use crate::Msg;
 use crate::GLOBAL_STATE;
-use yew::{html, Context, Html};
+use yew::{html, Context, Html, AttrValue,};
 
 pub fn response(ctx: &Context<BoltApp>) -> Html {
     let state = GLOBAL_STATE.lock().unwrap();
@@ -25,7 +25,7 @@ pub fn response(ctx: &Context<BoltApp>) -> Html {
         <div class="tabcontent">
             if state.resp_tab == 1 {
                 <div id="respbody" class="respbody" >
-                    {state.response.body.clone()}
+                    {Html::from_html_unchecked(AttrValue::from(state.response.body.clone()))}
                 </div>
             } else if state.resp_tab == 2 {
                 <div class="respheaders">

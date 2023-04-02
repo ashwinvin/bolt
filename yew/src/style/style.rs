@@ -209,11 +209,15 @@ body {
 
 .respbody {
 	width: 100%;
-	height: 100%;
+	
+	height: 200px;
+	
 	background-color: rgb(3, 7, 13);
 	border: 0.5px solid gray;
 	color: white;
 	font-size: 15px;
+
+	overflow: scroll;
 }
 
 .respbody:focus {

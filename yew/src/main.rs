@@ -6,11 +6,12 @@ use tauri_sys::tauri;
 use yew::{html::Scope, Component, Context, Html};
 
 use syntect::highlighting::ThemeSet;
+use syntect::highlighting::{Color, Theme};
 use syntect::html::highlighted_html_for_string;
 use syntect::parsing::SyntaxSet;
 
-mod style;
 mod process;
+mod style;
 mod utils;
 mod view;
 
@@ -214,7 +215,8 @@ pub fn receive_response(data: &str) {
 
     // bolt_log(&format!("{:?}", response));
 
-    // FIXME: render body as html
+    response.body = format_json(&response.body);
+
     response.body = highlight_body(&response.body);
 
     state.response = response;
@@ -224,20 +226,35 @@ pub fn receive_response(data: &str) {
     link.send_message(Msg::Update);
 }
 
-// FIXME: remove background
+fn format_json(data: &String) -> String {
+    let value: serde_json::Value = serde_json::from_str(data).unwrap();
+
+    let pretty = serde_json::to_string_pretty(&value).unwrap();
+
+    return pretty;
+}
+
+fn create_custom_theme() -> Theme {
+    let mut theme = ThemeSet::load_defaults().themes["Solarized (dark)"].clone();
+
+    // Change the background color
+    theme.settings.background = Some(Color {
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 0,
+    });
+
+    theme
+}
+
 fn highlight_body(body: &String) -> String {
     // Add syntax highlighting
     let syntax_set = SyntaxSet::load_defaults_newlines();
-    let theme_set = ThemeSet::load_defaults();
+    let theme = create_custom_theme();
     let syntax = syntax_set.find_syntax_by_extension("json").unwrap();
 
-    let html = highlighted_html_for_string(
-        body,
-        &syntax_set,
-        &syntax,
-        &theme_set.themes["Solarized (dark)"],
-    )
-    .unwrap();
+    let html = highlighted_html_for_string(body, &syntax_set, &syntax, &theme).unwrap();
 
     return html;
 }
