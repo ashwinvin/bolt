@@ -49,6 +49,8 @@ body {
 	background-color: rgb(4, 12, 23);
 	height: 90vh;
 	border-right: 0.5px solid gray;
+
+	overflow: scroll;
 }
 
 .sidebaritem {

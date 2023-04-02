@@ -13,7 +13,7 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
 
             <div class="main">
                 {view::sidebar1::sidebar1()}
-                {view::sidebar2::sidebar2()}
+                {view::sidebar2::sidebar2(ctx)}
 
                 <div class="content">
                     {view::request::request(ctx)}

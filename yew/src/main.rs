@@ -47,6 +47,9 @@ pub enum Msg {
     HeaderChanged(usize),
     ParamChanged(usize),
 
+    AddRequest,
+    SelectRequest(usize),
+
     Update,
 }
 
@@ -70,6 +73,18 @@ struct Response {
     size: u64,
 }
 
+impl Response {
+    fn new() -> Self {
+        Response {
+            status: 0,
+            body: String::new(),
+            headers: Vec::new(),
+            time: 0,
+            size: 0,
+        }
+    }
+}
+
 #[derive(Clone, Serialize, Deserialize)]
 struct Request {
     url: String,
@@ -77,26 +92,44 @@ struct Request {
     headers: Vec<Vec<String>>,
     params: Vec<Vec<String>>,
     method: Method,
+
+    response: Response,
+
+    // META
+    name: String
+}
+
+impl Request {
+    fn new() -> Request {
+        Request {
+            url: String::new(),
+            body: String::new(),
+            headers: vec![vec![String::new(), String::new()]],
+            params: vec![vec![String::new(), String::new()]],
+            method: Method::GET,
+
+            response: Response::new(),
+
+            // META
+            name: "NEW REQUEST ".to_string(),
+        }
+    }
 }
 
 struct AppState {
     link: Option<Scope<BoltApp>>,
 
-    method: Method,
+    current_request: usize,
 
-    request: Request,
-    response: Response,
+    requests: Vec<Request>,
 
     req_tab: u8,
     resp_tab: u8,
 }
 
 unsafe impl Sync for BoltApp {}
-
 unsafe impl Send for BoltApp {}
-
 unsafe impl Sync for AppState {}
-
 unsafe impl Send for AppState {}
 
 impl AppState {
@@ -104,26 +137,12 @@ impl AppState {
         Self {
             link: None,
 
-            method: Method::GET,
-
             req_tab: 1,
             resp_tab: 1,
 
-            request: Request {
-                url: "".to_string(),
-                body: "".to_string(),
-                headers: vec![vec!["".to_string(), "".to_string()]],
-                params: vec![vec!["".to_string(), "".to_string()]],
-                method: Method::GET,
-            },
+            current_request: 0,
 
-            response: Response {
-                status: 0,
-                body: "Response body".to_string(),
-                headers: Vec::new(),
-                time: 0,
-                size: 0,
-            },
+            requests: vec![Request::new()],
         }
     }
 }
@@ -219,7 +238,8 @@ pub fn receive_response(data: &str) {
 
     response.body = highlight_body(&response.body);
 
-    state.response = response;
+    let current = state.current_request;
+    state.requests[current].response = response;
 
     let link = state.link.as_ref().unwrap();
 

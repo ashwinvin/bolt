@@ -1,20 +1,23 @@
+use crate::send_request;
+use crate::utils::*;
 use crate::Msg;
 use crate::GLOBAL_STATE;
-use crate::utils::*;
-use crate::send_request;
+use crate::Request;
+
 
 pub fn process(msg: Msg) -> bool {
     match msg {
         Msg::SelectedMethod(meth) => {
             let mut state = GLOBAL_STATE.lock().unwrap();
-            state.method = meth;
+            let current = state.current_request;
+            state.requests[current].method = meth;
 
             return true;
         }
 
         Msg::SendPressed => {
             let state = GLOBAL_STATE.lock().unwrap();
-            send_request(state.request.clone());
+            send_request(state.requests[state.current_request].clone());
 
             return true;
         }
@@ -65,8 +68,8 @@ pub fn process(msg: Msg) -> bool {
 
         Msg::AddHeader => {
             let mut state = GLOBAL_STATE.lock().unwrap();
-            state
-                .request
+            let current = state.current_request;
+            state.requests[current]
                 .headers
                 .push(vec!["".to_string(), "".to_string()]);
 
@@ -75,15 +78,16 @@ pub fn process(msg: Msg) -> bool {
 
         Msg::RemoveHeader(index) => {
             let mut state = GLOBAL_STATE.lock().unwrap();
-            state.request.headers.remove(index);
+            let current = state.current_request;
+            state.requests[current].headers.remove(index);
 
             return true;
         }
 
         Msg::AddParam => {
             let mut state = GLOBAL_STATE.lock().unwrap();
-            state
-                .request
+            let current = state.current_request;
+            state.requests[current]
                 .params
                 .push(vec!["".to_string(), "".to_string()]);
 
@@ -92,7 +96,8 @@ pub fn process(msg: Msg) -> bool {
 
         Msg::RemoveParam(index) => {
             let mut state = GLOBAL_STATE.lock().unwrap();
-            state.request.params.remove(index);
+            let current = state.current_request;
+            state.requests[current].params.remove(index);
 
             return true;
         }
@@ -101,7 +106,8 @@ pub fn process(msg: Msg) -> bool {
             let method = get_method();
 
             let mut state = GLOBAL_STATE.lock().unwrap();
-            state.request.method = method;
+            let current = state.current_request;
+            state.requests[current].method = method;
 
             return true;
         }
@@ -110,7 +116,8 @@ pub fn process(msg: Msg) -> bool {
             let url = get_url();
 
             let mut state = GLOBAL_STATE.lock().unwrap();
-            state.request.url = url;
+            let current = state.current_request;
+            state.requests[current].url = url;
 
             return true;
         }
@@ -119,7 +126,8 @@ pub fn process(msg: Msg) -> bool {
             let body = get_body();
 
             let mut state = GLOBAL_STATE.lock().unwrap();
-            state.request.body = body;
+            let current = state.current_request;
+            state.requests[current].body = body;
 
             return true;
         }
@@ -128,7 +136,8 @@ pub fn process(msg: Msg) -> bool {
             let header = get_header(index);
 
             let mut state = GLOBAL_STATE.lock().unwrap();
-            state.request.headers[index] = header;
+            let current = state.current_request;
+            state.requests[current].headers[index] = header;
 
             return true;
         }
@@ -137,10 +146,26 @@ pub fn process(msg: Msg) -> bool {
             let param = get_param(index);
 
             let mut state = GLOBAL_STATE.lock().unwrap();
-            state.request.params[index] = param;
+            let current = state.current_request;
+            state.requests[current].params[index] = param;
 
             return true;
         }
+
+        Msg::AddRequest => {
+            let mut state = GLOBAL_STATE.lock().unwrap();
+            state.requests.push(Request::new());
+
+            return true;
+        }
+        
+        Msg::SelectRequest(index) => {
+            let mut state = GLOBAL_STATE.lock().unwrap();
+            state.current_request = index;
+
+            return true;
+        }
+
 
         Msg::Update => {
             return true;
