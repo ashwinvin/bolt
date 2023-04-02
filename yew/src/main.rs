@@ -59,6 +59,15 @@ pub enum Method {
     POST,
 }
 
+impl Method {
+    fn to_string(&self) -> String {
+        match self {
+            Method::GET => "get".to_string(),
+            Method::POST => "post".to_string(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct BoltApp {
     style: StyleSource,
@@ -96,7 +105,7 @@ struct Request {
     response: Response,
 
     // META
-    name: String
+    name: String,
 }
 
 impl Request {

@@ -6,15 +6,16 @@ use yew::{html, Context, Html};
 
 pub fn request(ctx: &Context<BoltApp>) -> Html {
     let state = GLOBAL_STATE.lock().unwrap();
+    let method = state.requests[state.current_request].method.to_string();
 
-    // FIXME: method 
+    // FIXME: method
     html! {
         <div class="req">
             <div class="requestbar">
                 <div class="">
-                    <select id="methodselect" class="methodselect pointer" value={state.requests[state.current_request].method.to_string()} onchange={ctx.link().callback(|_| Msg::MethodChanged)}>
-                        <option value="get">{"GET"}</option>
-                        <option value="post">{"POST"}</option>
+                    <select id="methodselect" class="methodselect pointer" onchange={ctx.link().callback(|_| Msg::MethodChanged)}>
+                        <option value="get" selected={if method == "get" { true } else { false }}>{"GET"}</option>
+                        <option value="post" selected={if method == "post" { true } else { false }}>{"POST"}</option>
                     </select>
                 </div>
 

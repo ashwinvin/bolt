@@ -55,10 +55,10 @@
     },
     "windows": [
       {
-        "fullscreen": true,
+          "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "Bolt API",
+        "title": "Bolt",
         "width": 800
       }
     ]
