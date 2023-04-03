@@ -27,6 +27,7 @@ struct HttpResponse {
     time: u32,
     size: u64,
     response_type: ResponseType,
+    request_index: usize,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -35,6 +36,7 @@ struct HttpRequest {
     method: Method,
     body: String,
     headers: Vec<Vec<String>>,
+    request_index: usize,
 }
 
 #[derive(Serialize)]
@@ -52,6 +54,7 @@ impl AppState {
                 time: 0,
                 size: 0,
                 response_type: ResponseType::TEXT,
+                request_index: 0,
             },
         }
     }
@@ -75,12 +78,18 @@ fn bolt_panic(log: &str) {
 }
 
 #[tauri::command]
+fn open_link(link: String) {
+    webbrowser::open(&link).unwrap();
+}
+
+#[tauri::command]
 fn send_request(
     window: Window,
     url: String,
     method: Method,
     body: String,
     headers: Vec<Vec<String>>,
+    index: usize,
 ) -> String {
     // bolt_log("Sending request");
 
@@ -89,6 +98,7 @@ fn send_request(
         method,
         body,
         headers,
+        request_index: index,
     };
 
     std::thread::spawn(move || {
@@ -110,7 +120,10 @@ fn http_send(req: HttpRequest) -> HttpResponse {
         time: 0,
         size: 0,
         response_type: ResponseType::TEXT,
+        request_index: 0,
     };
+
+    resp.request_index = req.request_index;
 
     let client = reqwest::blocking::Client::new();
 
@@ -196,7 +209,12 @@ fn extract_headers(map: &reqwest::header::HeaderMap) -> Vec<Vec<String>> {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![send_request, bolt_log, bolt_panic])
+        .invoke_handler(tauri::generate_handler![
+            send_request,
+            open_link,
+            bolt_log,
+            bolt_panic
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

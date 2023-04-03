@@ -9,7 +9,7 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
         <Global css={sel.style.clone()} />
 
         <body>
-            {view::navbar::get_navbar()}
+            {view::navbar::get_navbar(ctx)}
 
             <div class="main">
                 {view::sidebar1::sidebar1()}
@@ -21,7 +21,7 @@ pub fn get_main(sel: &BoltApp, ctx: &Context<BoltApp>) -> Html {
                 </div>
             </div>
 
-            {view::console::console()}
+            // {view::console::console()}
         </body>
         </>
     }

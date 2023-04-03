@@ -40,14 +40,14 @@ body {
 .sidebar1 {
 	width: 5vw;
 	background-color: rgb(4, 12, 23);
-	height: 90vh;
+	height: 95vh;
 	border-right: 0.5px solid gray;
 }
 
 .sidebar2 {
 	width: 15vw;
 	background-color: rgb(4, 12, 23);
-	height: 90vh;
+	height: 95vh;
 	border-right: 0.5px solid gray;
 
 	overflow: scroll;
@@ -98,7 +98,7 @@ body {
 }
 
 .content {
-	height: 90vh;
+	height: 95vh;
 	width: 80vw;
 	background-color: rgb(3, 7, 13);
 	display: flex;

@@ -1,9 +1,13 @@
+use wasm_bindgen::JsCast;
+use wasm_bindgen::closure::Closure;
 use futures::stream::StreamExt;
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
 use stylist::StyleSource;
 use tauri_sys::tauri;
 use yew::{html::Scope, Component, Context, Html};
+use web_sys::{EventTarget, MouseEvent};
+
 
 use syntect::highlighting::ThemeSet;
 use syntect::highlighting::{Color, Theme};
@@ -16,8 +20,6 @@ mod utils;
 mod view;
 
 // http://localhost:2000/ping
-
-// TODO: request tabs
 
 // #[wasm_bindgen(module = "/script.js")]
 // extern "C" {}
@@ -52,6 +54,7 @@ pub enum Msg {
     SelectRequest(usize),
 
     Update,
+    HelpPressed
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
@@ -89,6 +92,7 @@ struct Response {
     time: u32,
     size: u64,
     response_type: ResponseType,
+    request_index: usize
 }
 
 impl Response {
@@ -100,6 +104,7 @@ impl Response {
             time: 0,
             size: 0,
             response_type: ResponseType::TEXT,
+            request_index: 0
         }
     }
 }
@@ -116,6 +121,7 @@ struct Request {
 
     // META
     name: String,
+    request_index: usize
 }
 
 impl Request {
@@ -131,6 +137,7 @@ impl Request {
 
             // META
             name: "NEW REQUEST ".to_string(),
+            request_index: 0
         }
     }
 }
@@ -176,6 +183,8 @@ impl Component for BoltApp {
     type Properties = ();
 
     fn create(ctx: &Context<Self>) -> Self {
+        disable_text_selection();
+        
         let mut state = GLOBAL_STATE.lock().unwrap();
         state.link = Some(ctx.link().clone());
 
@@ -202,6 +211,7 @@ fn send_request(request: Request) {
         method: Method,
         body: String,
         headers: Vec<Vec<String>>,
+        index: usize
     }
 
     let payload = Payload {
@@ -209,6 +219,7 @@ fn send_request(request: Request) {
         method: request.method,
         body: request.body,
         headers: request.headers,
+        index: request.request_index
     };
 
     // bolt_log(&format!("{:?}", payload));
@@ -258,7 +269,7 @@ pub fn receive_response(data: &str) {
         response.body = highlight_body(&response.body);
     }
 
-    let current = state.current_request;
+    let current = response.request_index;
     state.requests[current].response = response;
 
     let link = state.link.as_ref().unwrap();
@@ -311,4 +322,17 @@ fn main() {
     });
 
     yew::Renderer::<BoltApp>::new().render();
+}
+
+// HACK: disables selecting text
+fn disable_text_selection() {
+    if let Some(document) = web_sys::window().and_then(|win| win.document()) {
+        if let Some(body) = document.body() {
+            let listener = Closure::wrap(Box::new(move |event: MouseEvent| {
+                event.prevent_default();
+            }) as Box<dyn FnMut(_)>);
+            let _ = EventTarget::from(body).add_event_listener_with_callback("selectstart", listener.as_ref().unchecked_ref());
+            listener.forget();
+        }
+    }
 }
