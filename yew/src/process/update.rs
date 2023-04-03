@@ -20,7 +20,7 @@ pub fn process(msg: Msg) -> bool {
             state.requests[current].request_index = current;
 
             // if state.requests[current].body != "" {
-                send_request(state.requests[state.current_request].clone());
+            send_request(state.requests[state.current_request].clone());
             // }
 
             return true;
@@ -198,6 +198,13 @@ pub fn process(msg: Msg) -> bool {
         }
 
         Msg::Update => {
+            return true;
+        }
+
+        Msg::SwitchPage(page) => {
+            let mut state = GLOBAL_STATE.lock().unwrap();
+            state.page = page;
+
             return true;
         }
     }
