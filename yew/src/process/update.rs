@@ -1,9 +1,8 @@
 use crate::send_request;
 use crate::utils::*;
 use crate::Msg;
-use crate::GLOBAL_STATE;
 use crate::Request;
-
+use crate::GLOBAL_STATE;
 
 pub fn process(msg: Msg) -> bool {
     match msg {
@@ -117,7 +116,8 @@ pub fn process(msg: Msg) -> bool {
 
             let mut state = GLOBAL_STATE.lock().unwrap();
             let current = state.current_request;
-            state.requests[current].url = url;
+            state.requests[current].url = url.clone();
+             state.requests[current].name = url;
 
             return true;
         }
@@ -154,18 +154,33 @@ pub fn process(msg: Msg) -> bool {
 
         Msg::AddRequest => {
             let mut state = GLOBAL_STATE.lock().unwrap();
-            state.requests.push(Request::new());
+
+            let mut new_request = Request::new();
+            new_request.name = new_request.name + &(state.requests.len() + 1).to_string();
+
+            state.requests.push(new_request);
 
             return true;
         }
-        
+
+        Msg::RemoveRequest(index) => {
+            let mut state = GLOBAL_STATE.lock().unwrap();
+
+            if state.requests.len() > 1 {
+                state.requests.remove(index);
+            }
+
+            state.current_request = 0;
+
+            return true;
+        }
+
         Msg::SelectRequest(index) => {
             let mut state = GLOBAL_STATE.lock().unwrap();
             state.current_request = index;
 
             return true;
         }
-
 
         Msg::Update => {
             return true;

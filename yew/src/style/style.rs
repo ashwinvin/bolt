@@ -77,12 +77,15 @@ body {
 
 .sidebar2item {
 	display: flex;
-	flex-direction: column;
-	align-items: left;
-	justify-content: center;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
 	background: rgb(7, 31, 56);
-	height: 20px;
-	font-size: 10px;
+	height: 25px;
+	font-size: 12px;
+	padding: 5px;
+
+	border-bottom: 0.5px solid white;
 }
 
 .sidebar2item:hover {

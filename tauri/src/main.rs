@@ -13,6 +13,12 @@ pub enum Method {
     NONE,
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
+pub enum ResponseType {
+    TEXT,
+    JSON,
+}
+
 #[derive(Clone, Serialize)]
 struct HttpResponse {
     status: u16,
@@ -20,6 +26,7 @@ struct HttpResponse {
     headers: Vec<Vec<String>>,
     time: u32,
     size: u64,
+    response_type: ResponseType,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -44,6 +51,7 @@ impl AppState {
                 headers: Vec::new(),
                 time: 0,
                 size: 0,
+                response_type: ResponseType::TEXT,
             },
         }
     }
@@ -101,6 +109,7 @@ fn http_send(req: HttpRequest) -> HttpResponse {
         headers: Vec::new(),
         time: 0,
         size: 0,
+        response_type: ResponseType::TEXT,
     };
 
     let client = reqwest::blocking::Client::new();
@@ -155,6 +164,13 @@ fn http_send(req: HttpRequest) -> HttpResponse {
         Method::NONE => {
             panic!("Invalid method");
         }
+    }
+
+    if resp.headers.contains(&vec![
+        "content-type".to_string(),
+        "application/json".to_string(),
+    ]) {
+        resp.response_type = ResponseType::JSON;
     }
 
     let mut state = GLOBAL_STATE.lock().unwrap();

@@ -48,10 +48,18 @@ pub enum Msg {
     ParamChanged(usize),
 
     AddRequest,
+    RemoveRequest(usize),
     SelectRequest(usize),
 
     Update,
 }
+
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
+pub enum ResponseType {
+    TEXT,
+    JSON,
+}
+
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy)]
 pub enum Method {
@@ -80,6 +88,7 @@ struct Response {
     headers: Vec<Vec<String>>,
     time: u32,
     size: u64,
+    response_type: ResponseType,
 }
 
 impl Response {
@@ -90,6 +99,7 @@ impl Response {
             headers: Vec::new(),
             time: 0,
             size: 0,
+            response_type: ResponseType::TEXT,
         }
     }
 }
@@ -243,9 +253,10 @@ pub fn receive_response(data: &str) {
 
     // bolt_log(&format!("{:?}", response));
 
-    response.body = format_json(&response.body);
-
-    response.body = highlight_body(&response.body);
+    if response.response_type == ResponseType::JSON {
+        response.body = format_json(&response.body);
+        response.body = highlight_body(&response.body);
+    }
 
     let current = state.current_request;
     state.requests[current].response = response;

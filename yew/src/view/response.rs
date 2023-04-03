@@ -2,6 +2,7 @@ use crate::view;
 use crate::BoltApp;
 use crate::Msg;
 use crate::GLOBAL_STATE;
+use crate::ResponseType;
 use yew::{html, AttrValue, Context, Html};
 
 pub fn response(ctx: &Context<BoltApp>) -> Html {
@@ -25,7 +26,11 @@ pub fn response(ctx: &Context<BoltApp>) -> Html {
         <div class="tabcontent">
             if state.resp_tab == 1 {
                 <div id="respbody" class="respbody" >
-                    {Html::from_html_unchecked(AttrValue::from(state.requests[state.current_request].response.body.clone()))}
+                    if state.requests[state.current_request].response.response_type == ResponseType::JSON {
+                        {Html::from_html_unchecked(AttrValue::from(state.requests[state.current_request].response.body.clone()))}
+                    } else {
+                        {state.requests[state.current_request].response.body.clone()}
+                    }
                 </div>
             } else if state.resp_tab == 2 {
                 <div class="respheaders">
