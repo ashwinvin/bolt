@@ -1,9 +1,13 @@
+use wasm_bindgen::JsCast;
+use wasm_bindgen::closure::Closure;
 use futures::stream::StreamExt;
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
 use stylist::StyleSource;
 use tauri_sys::tauri;
 use yew::{html::Scope, Component, Context, Html};
+use web_sys::{EventTarget, MouseEvent};
+
 
 use syntect::highlighting::ThemeSet;
 use syntect::highlighting::{Color, Theme};
@@ -16,8 +20,6 @@ mod utils;
 mod view;
 
 // http://localhost:2000/ping
-
-// TODO: request tabs
 
 // #[wasm_bindgen(module = "/script.js")]
 // extern "C" {}
@@ -176,6 +178,8 @@ impl Component for BoltApp {
     type Properties = ();
 
     fn create(ctx: &Context<Self>) -> Self {
+        disable_text_selection();
+        
         let mut state = GLOBAL_STATE.lock().unwrap();
         state.link = Some(ctx.link().clone());
 
@@ -311,4 +315,17 @@ fn main() {
     });
 
     yew::Renderer::<BoltApp>::new().render();
+}
+
+// HACK: disables selecting text
+fn disable_text_selection() {
+    if let Some(document) = web_sys::window().and_then(|win| win.document()) {
+        if let Some(body) = document.body() {
+            let listener = Closure::wrap(Box::new(move |event: MouseEvent| {
+                event.prevent_default();
+            }) as Box<dyn FnMut(_)>);
+            let _ = EventTarget::from(body).add_event_listener_with_callback("selectstart", listener.as_ref().unchecked_ref());
+            listener.forget();
+        }
+    }
 }
