@@ -54,6 +54,7 @@ pub enum Msg {
     SelectRequest(usize),
 
     Update,
+    HelpPressed
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
@@ -91,6 +92,7 @@ struct Response {
     time: u32,
     size: u64,
     response_type: ResponseType,
+    request_index: usize
 }
 
 impl Response {
@@ -102,6 +104,7 @@ impl Response {
             time: 0,
             size: 0,
             response_type: ResponseType::TEXT,
+            request_index: 0
         }
     }
 }
@@ -118,6 +121,7 @@ struct Request {
 
     // META
     name: String,
+    request_index: usize
 }
 
 impl Request {
@@ -133,6 +137,7 @@ impl Request {
 
             // META
             name: "NEW REQUEST ".to_string(),
+            request_index: 0
         }
     }
 }
@@ -206,6 +211,7 @@ fn send_request(request: Request) {
         method: Method,
         body: String,
         headers: Vec<Vec<String>>,
+        index: usize
     }
 
     let payload = Payload {
@@ -213,6 +219,7 @@ fn send_request(request: Request) {
         method: request.method,
         body: request.body,
         headers: request.headers,
+        index: request.request_index
     };
 
     // bolt_log(&format!("{:?}", payload));
@@ -262,7 +269,7 @@ pub fn receive_response(data: &str) {
         response.body = highlight_body(&response.body);
     }
 
-    let current = state.current_request;
+    let current = response.request_index;
     state.requests[current].response = response;
 
     let link = state.link.as_ref().unwrap();

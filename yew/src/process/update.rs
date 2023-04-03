@@ -15,8 +15,19 @@ pub fn process(msg: Msg) -> bool {
         }
 
         Msg::SendPressed => {
-            let state = GLOBAL_STATE.lock().unwrap();
-            send_request(state.requests[state.current_request].clone());
+            let mut state = GLOBAL_STATE.lock().unwrap();
+            let current = state.current_request;
+            state.requests[current].request_index = current;
+
+            // if state.requests[current].body != "" {
+                send_request(state.requests[state.current_request].clone());
+            // }
+
+            return true;
+        }
+
+        Msg::HelpPressed => {
+            open_link("https://github.com/hiro-codes/bolt".to_string());
 
             return true;
         }
@@ -117,7 +128,7 @@ pub fn process(msg: Msg) -> bool {
             let mut state = GLOBAL_STATE.lock().unwrap();
             let current = state.current_request;
             state.requests[current].url = url.clone();
-             state.requests[current].name = url;
+            state.requests[current].name = url;
 
             return true;
         }
@@ -168,9 +179,13 @@ pub fn process(msg: Msg) -> bool {
 
             if state.requests.len() > 1 {
                 state.requests.remove(index);
+            } else {
+                state.requests = vec![Request::new()];
             }
 
-            state.current_request = 0;
+            if state.current_request > state.requests.len() - 1 {
+                state.current_request = state.requests.len() - 1;
+            }
 
             return true;
         }

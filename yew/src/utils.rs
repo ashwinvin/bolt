@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use tauri_sys::tauri;
 use wasm_bindgen::prelude::*;
 
-pub fn bolt_log(log: &str) {
+pub fn _bolt_log(log: &str) {
     #[derive(Serialize, Deserialize)]
     struct Payload<'a> {
         log: &'a str,
@@ -15,6 +15,19 @@ pub fn bolt_log(log: &str) {
         let _resp: String = tauri::invoke("bolt_log", &Payload { log: &log })
             .await
             .unwrap();
+    });
+}
+
+pub fn open_link(link: String) {
+    // webbrowser::open("https://github.com/hiro-codes/bolt").unwrap();
+
+    #[derive(Serialize, Deserialize)]
+    struct Payload {
+        link: String,
+    }
+    
+    wasm_bindgen_futures::spawn_local(async move {
+        let _resp: String = tauri::invoke("open_link", &Payload { link }).await.unwrap();
     });
 }
 
@@ -33,7 +46,7 @@ pub fn bolt_panic(log: &str) {
     });
 }
 
-pub fn set_html(id: &str, content: String) {
+pub fn _set_html(id: &str, content: String) {
     let window = web_sys::window().unwrap();
     let doc = web_sys::Window::document(&window).unwrap();
     let div = web_sys::Document::get_element_by_id(&doc, id).unwrap();
