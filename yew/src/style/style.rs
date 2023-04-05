@@ -92,6 +92,26 @@ body {
 	 background: rgb(23, 59, 97);
 }
 
+.sidebar2item-child {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	background: rgb(7, 31, 56);
+	height: 25px;
+	font-size: 12px;
+	padding: 5px;
+
+	border-bottom: 0.5px solid white;
+	border-left: 0.5px solid white;
+
+	margin-left: 15px;		
+}
+
+.sidebar2item:hover {
+	 background: rgb(23, 59, 97);
+}
+		
 .sidebar2item-selected {
 	background: rgb(23, 59, 97);
 	border-left: 2px solid orange;

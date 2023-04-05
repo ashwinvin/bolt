@@ -4,9 +4,9 @@ use stylist::yew::Global;
 use yew::{html, Html};
 use crate::Request;
 
-pub fn home_view(bctx: &mut BoltContext, request: Request) -> Html {
-    // let ctx = bctx.ctx.unwrap();
+pub fn collections_view(bctx: &mut BoltContext, request: Request) -> Html {
     let req_tab = bctx.req_tab;
+    // let ctx = bctx.ctx.unwrap();
     
     html! {
         <>
@@ -16,8 +16,8 @@ pub fn home_view(bctx: &mut BoltContext, request: Request) -> Html {
             {view::navbar::get_navbar(bctx)}
 
             <div class="main">
-                {view::sidebar1::sidebar(bctx, 0)}
-                {view::sidebar2::sidebar_requests(bctx)}
+                {view::sidebar1::sidebar(bctx, 1)}
+                {view::sidebar2::sidebar_col(bctx)}
 
                 <div class="content">
                     {view::request::request(bctx, request, req_tab)}

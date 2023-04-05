@@ -1,18 +1,10 @@
-use wasm_bindgen::JsCast;
-use wasm_bindgen::closure::Closure;
+use crate::utils::*;
 use futures::stream::StreamExt;
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
 use stylist::StyleSource;
 use tauri_sys::tauri;
 use yew::{html::Scope, Component, Context, Html};
-use web_sys::{EventTarget, MouseEvent};
-
-
-use syntect::highlighting::ThemeSet;
-use syntect::highlighting::{Color, Theme};
-use syntect::html::highlighted_html_for_string;
-use syntect::parsing::SyntaxSet;
 
 mod process;
 mod style;
@@ -25,6 +17,7 @@ mod view;
 // extern "C" {}
 
 // Define the possible messages which can be sent to the component
+#[derive(Clone)]
 pub enum Msg {
     SelectedMethod(Method),
     SendPressed,
@@ -53,8 +46,22 @@ pub enum Msg {
     RemoveRequest(usize),
     SelectRequest(usize),
 
+    AddCollection,
+    RemoveCollection(usize),
+    AddToCollection(usize),
+
+    SelectFromCollection(usize, usize),
+    RemoveFromCollection(usize, usize),
+
     Update,
-    HelpPressed
+    HelpPressed,
+    SwitchPage(Page),
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
+pub enum Page {
+    Home,
+    Collections,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
@@ -62,7 +69,6 @@ pub enum ResponseType {
     TEXT,
     JSON,
 }
-
 
 #[derive(Serialize, Deserialize, Debug, Clone, Copy)]
 pub enum Method {
@@ -80,9 +86,7 @@ impl Method {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct BoltApp {
-    style: StyleSource,
-}
+pub struct BoltApp {}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Response {
@@ -92,7 +96,7 @@ struct Response {
     time: u32,
     size: u64,
     response_type: ResponseType,
-    request_index: usize
+    request_index: usize,
 }
 
 impl Response {
@@ -104,13 +108,13 @@ impl Response {
             time: 0,
             size: 0,
             response_type: ResponseType::TEXT,
-            request_index: 0
+            request_index: 0,
         }
     }
 }
 
 #[derive(Clone, Serialize, Deserialize)]
-struct Request {
+pub struct Request {
     url: String,
     body: String,
     headers: Vec<Vec<String>>,
@@ -121,7 +125,7 @@ struct Request {
 
     // META
     name: String,
-    request_index: usize
+    request_index: usize,
 }
 
 impl Request {
@@ -137,45 +141,85 @@ impl Request {
 
             // META
             name: "NEW REQUEST ".to_string(),
-            request_index: 0
+            request_index: 0,
         }
     }
 }
 
-struct AppState {
+#[derive(Clone, Serialize, Deserialize)]
+struct Collection {
+    name: String,
+    requests: Vec<Request>,
+}
+
+impl Collection {
+    fn new() -> Collection {
+        Collection {
+            name: "NEW COLLECTION ".to_string(),
+            requests: vec![],
+        }
+    }
+}
+
+// #[derive(Clone)]
+pub struct BoltState {
+    bctx: BoltContext,
+}
+
+#[derive(Clone)]
+pub struct BoltContext {
     link: Option<Scope<BoltApp>>,
 
-    current_request: usize,
+    style: StyleSource,
 
-    requests: Vec<Request>,
-
+    page: Page,
     req_tab: u8,
     resp_tab: u8,
+    main_current: usize,
+    col_current: Vec<usize>,
+
+    
+    main_col: Collection,
+    collections: Vec<Collection>,
+}
+
+impl BoltContext {
+    fn new() -> Self {
+        let bctx = BoltContext {
+            link: None,
+
+            style: style::style::get_styles(),
+
+            main_col: Collection::new(),
+            collections: vec![],
+            page: Page::Home,
+
+            req_tab: 1,
+            resp_tab: 1,
+            main_current: 0,
+            col_current: vec![0, 0],
+        };
+
+        return bctx;
+    }
 }
 
 unsafe impl Sync for BoltApp {}
 unsafe impl Send for BoltApp {}
-unsafe impl Sync for AppState {}
-unsafe impl Send for AppState {}
+unsafe impl Sync for BoltState {}
+unsafe impl Send for BoltState {}
 
-impl AppState {
+impl BoltState {
     fn new() -> Self {
         Self {
-            link: None,
-
-            req_tab: 1,
-            resp_tab: 1,
-
-            current_request: 0,
-
-            requests: vec![Request::new()],
+            bctx: BoltContext::new(),
         }
     }
 }
 
 // Create a shared global state variable
 lazy_static::lazy_static! {
-    static ref GLOBAL_STATE: Arc<Mutex<AppState>> = Arc::new(Mutex::new(AppState::new()));
+    static ref GLOBAL_STATE: Arc<Mutex<BoltState>> = Arc::new(Mutex::new(BoltState::new()));
 }
 
 impl Component for BoltApp {
@@ -184,23 +228,55 @@ impl Component for BoltApp {
 
     fn create(ctx: &Context<Self>) -> Self {
         disable_text_selection();
-        
-        let mut state = GLOBAL_STATE.lock().unwrap();
-        state.link = Some(ctx.link().clone());
 
-        Self {
-            style: style::style::get_styles(),
-        }
+        let mut state = GLOBAL_STATE.lock().unwrap();
+        state.bctx.link = Some(ctx.link().clone());
+
+        state.bctx.main_col.requests.push(Request::new());
+
+        let mut first_collection = Collection::new();
+        first_collection.requests.push(Request::new());
+        state.bctx.collections.push(first_collection);
+
+        Self {}
     }
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
-        let render: bool = process::update::process(msg);
+        let mut state = GLOBAL_STATE.lock().unwrap();
+        // let mut bctx = &state.bctx;
+
+        // drop(state);
+
+        let render: bool = process::update::process(&mut state.bctx, msg);
 
         return render;
     }
 
-    fn view(&self, ctx: &Context<Self>) -> Html {
-        view::home::get_main(self, ctx)
+    fn view(&self, _ctx: &Context<Self>) -> Html {
+        let mut state = GLOBAL_STATE.lock().unwrap();
+
+        // let bctx = &mut state.bctx.clone();
+
+        let page = state.bctx.page.clone();
+
+        let mut request = state.bctx.main_col.requests[state.bctx.main_current].clone();
+        if page == Page::Collections {
+            request = state.bctx.collections[state.bctx.col_current[0]].requests
+                [state.bctx.col_current[1]]
+                .clone();
+        }
+
+        // let req_tab = bctx.req_tab;
+
+        // drop(state);
+
+        if page == Page::Home {
+            view::home::home_view(&mut state.bctx, request)
+        } else if page == Page::Collections {
+            view::collections::collections_view(&mut state.bctx, request)
+        } else {
+            view::home::home_view(&mut state.bctx, request)
+        }
     }
 }
 
@@ -211,7 +287,7 @@ fn send_request(request: Request) {
         method: Method,
         body: String,
         headers: Vec<Vec<String>>,
-        index: usize
+        index: usize,
     }
 
     let payload = Payload {
@@ -219,7 +295,7 @@ fn send_request(request: Request) {
         method: request.method,
         body: request.body,
         headers: request.headers,
-        index: request.request_index
+        index: request.request_index,
     };
 
     // bolt_log(&format!("{:?}", payload));
@@ -227,32 +303,6 @@ fn send_request(request: Request) {
     wasm_bindgen_futures::spawn_local(async move {
         let _resp: String = tauri::invoke("send_request", &payload).await.unwrap();
     });
-}
-
-fn parse_url(url: String, params: Vec<Vec<String>>) -> String {
-    let mut new_url = url;
-
-    if params.len() > 0 && params[0][0] != "" {
-        new_url.push_str("?");
-    }
-
-    for (i, param) in params.iter().enumerate() {
-        if param[0] == "" || param[1] == "" {
-            // bolt_panic("Param at index {i} has empty field");
-            continue;
-        }
-
-        new_url.push_str(&param[0]);
-        new_url.push_str("=");
-        new_url.push_str(&param[1]);
-
-        if i != params.len() - 1 {
-            new_url.push_str("&");
-        }
-    }
-
-    // bolt_log(&format!("url is: {new_url}"));
-    return new_url;
 }
 
 pub fn receive_response(data: &str) {
@@ -270,44 +320,11 @@ pub fn receive_response(data: &str) {
     }
 
     let current = response.request_index;
-    state.requests[current].response = response;
+    state.bctx.main_col.requests[current].response = response;
 
-    let link = state.link.as_ref().unwrap();
+    let link = state.bctx.link.as_ref().unwrap();
 
     link.send_message(Msg::Update);
-}
-
-fn format_json(data: &String) -> String {
-    let value: serde_json::Value = serde_json::from_str(data).unwrap();
-
-    let pretty = serde_json::to_string_pretty(&value).unwrap();
-
-    return pretty;
-}
-
-fn create_custom_theme() -> Theme {
-    let mut theme = ThemeSet::load_defaults().themes["Solarized (dark)"].clone();
-
-    // Change the background color
-    theme.settings.background = Some(Color {
-        r: 0,
-        g: 0,
-        b: 0,
-        a: 0,
-    });
-
-    theme
-}
-
-fn highlight_body(body: &String) -> String {
-    // Add syntax highlighting
-    let syntax_set = SyntaxSet::load_defaults_newlines();
-    let theme = create_custom_theme();
-    let syntax = syntax_set.find_syntax_by_extension("json").unwrap();
-
-    let html = highlighted_html_for_string(body, &syntax_set, &syntax, &theme).unwrap();
-
-    return html;
 }
 
 fn main() {
@@ -322,17 +339,4 @@ fn main() {
     });
 
     yew::Renderer::<BoltApp>::new().render();
-}
-
-// HACK: disables selecting text
-fn disable_text_selection() {
-    if let Some(document) = web_sys::window().and_then(|win| win.document()) {
-        if let Some(body) = document.body() {
-            let listener = Closure::wrap(Box::new(move |event: MouseEvent| {
-                event.prevent_default();
-            }) as Box<dyn FnMut(_)>);
-            let _ = EventTarget::from(body).add_event_listener_with_callback("selectstart", listener.as_ref().unchecked_ref());
-            listener.forget();
-        }
-    }
 }

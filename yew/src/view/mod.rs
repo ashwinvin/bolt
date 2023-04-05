@@ -7,3 +7,4 @@ mod sidebar2;
 mod request;
 mod response;
 mod console;
+pub mod collections;
