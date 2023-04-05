@@ -1,10 +1,10 @@
+use crate::utils::*;
 use futures::stream::StreamExt;
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
 use stylist::StyleSource;
 use tauri_sys::tauri;
 use yew::{html::Scope, Component, Context, Html};
-use crate::utils::*;
 
 mod process;
 mod style;
@@ -17,6 +17,7 @@ mod view;
 // extern "C" {}
 
 // Define the possible messages which can be sent to the component
+#[derive(Clone)]
 pub enum Msg {
     SelectedMethod(Method),
     SendPressed,
@@ -45,9 +46,16 @@ pub enum Msg {
     RemoveRequest(usize),
     SelectRequest(usize),
 
+    AddCollection,
+    RemoveCollection(usize),
+    AddToCollection(usize),
+
+    SelectFromCollection(usize, usize),
+    RemoveFromCollection(usize, usize),
+
     Update,
     HelpPressed,
-    SwitchPage(Page)
+    SwitchPage(Page),
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
@@ -78,9 +86,7 @@ impl Method {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct BoltApp {
-    style: StyleSource,
-}
+pub struct BoltApp {}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Response {
@@ -108,7 +114,7 @@ impl Response {
 }
 
 #[derive(Clone, Serialize, Deserialize)]
-struct Request {
+pub struct Request {
     url: String,
     body: String,
     headers: Vec<Vec<String>>,
@@ -140,42 +146,80 @@ impl Request {
     }
 }
 
-struct AppState {
-    page: Page,
+#[derive(Clone, Serialize, Deserialize)]
+struct Collection {
+    name: String,
+    requests: Vec<Request>,
+}
+
+impl Collection {
+    fn new() -> Collection {
+        Collection {
+            name: "NEW COLLECTION ".to_string(),
+            requests: vec![],
+        }
+    }
+}
+
+// #[derive(Clone)]
+pub struct BoltState {
+    bctx: BoltContext,
+}
+
+#[derive(Clone)]
+pub struct BoltContext {
     link: Option<Scope<BoltApp>>,
 
-    current_request: usize,
+    style: StyleSource,
 
-    requests: Vec<Request>,
-
+    page: Page,
     req_tab: u8,
     resp_tab: u8,
+    main_current: usize,
+    col_current: Vec<usize>,
+
+    
+    main_col: Collection,
+    collections: Vec<Collection>,
+}
+
+impl BoltContext {
+    fn new() -> Self {
+        let bctx = BoltContext {
+            link: None,
+
+            style: style::style::get_styles(),
+
+            main_col: Collection::new(),
+            collections: vec![],
+            page: Page::Home,
+
+            req_tab: 1,
+            resp_tab: 1,
+            main_current: 0,
+            col_current: vec![0, 0],
+        };
+
+        return bctx;
+    }
 }
 
 unsafe impl Sync for BoltApp {}
 unsafe impl Send for BoltApp {}
-unsafe impl Sync for AppState {}
-unsafe impl Send for AppState {}
+unsafe impl Sync for BoltState {}
+unsafe impl Send for BoltState {}
 
-impl AppState {
+impl BoltState {
     fn new() -> Self {
         Self {
-            page: Page::Home,
-            link: None,
-
-            req_tab: 1,
-            resp_tab: 1,
-
-            current_request: 0,
-
-            requests: vec![Request::new()],
+            bctx: BoltContext::new(),
         }
     }
 }
 
 // Create a shared global state variable
 lazy_static::lazy_static! {
-    static ref GLOBAL_STATE: Arc<Mutex<AppState>> = Arc::new(Mutex::new(AppState::new()));
+    static ref GLOBAL_STATE: Arc<Mutex<BoltState>> = Arc::new(Mutex::new(BoltState::new()));
 }
 
 impl Component for BoltApp {
@@ -186,32 +230,52 @@ impl Component for BoltApp {
         disable_text_selection();
 
         let mut state = GLOBAL_STATE.lock().unwrap();
-        state.link = Some(ctx.link().clone());
+        state.bctx.link = Some(ctx.link().clone());
 
-        Self {
-            style: style::style::get_styles(),
-        }
+        state.bctx.main_col.requests.push(Request::new());
+
+        let mut first_collection = Collection::new();
+        first_collection.requests.push(Request::new());
+        state.bctx.collections.push(first_collection);
+
+        Self {}
     }
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
-        let render: bool = process::update::process(msg);
+        let mut state = GLOBAL_STATE.lock().unwrap();
+        // let mut bctx = &state.bctx;
+
+        // drop(state);
+
+        let render: bool = process::update::process(&mut state.bctx, msg);
 
         return render;
     }
 
-    fn view(&self, ctx: &Context<Self>) -> Html {
-        let state = GLOBAL_STATE.lock().unwrap();
+    fn view(&self, _ctx: &Context<Self>) -> Html {
+        let mut state = GLOBAL_STATE.lock().unwrap();
 
-        let page = state.page.clone();
+        // let bctx = &mut state.bctx.clone();
 
-        drop(state);
+        let page = state.bctx.page.clone();
+
+        let mut request = state.bctx.main_col.requests[state.bctx.main_current].clone();
+        if page == Page::Collections {
+            request = state.bctx.collections[state.bctx.col_current[0]].requests
+                [state.bctx.col_current[1]]
+                .clone();
+        }
+
+        // let req_tab = bctx.req_tab;
+
+        // drop(state);
 
         if page == Page::Home {
-            view::home::home_view(self, ctx)
+            view::home::home_view(&mut state.bctx, request)
         } else if page == Page::Collections {
-            view::collections::collections_view(self, ctx)
+            view::collections::collections_view(&mut state.bctx, request)
         } else {
-            view::home::home_view(self, ctx)
+            view::home::home_view(&mut state.bctx, request)
         }
     }
 }
@@ -241,7 +305,6 @@ fn send_request(request: Request) {
     });
 }
 
-
 pub fn receive_response(data: &str) {
     let mut state = GLOBAL_STATE.lock().unwrap();
 
@@ -257,13 +320,12 @@ pub fn receive_response(data: &str) {
     }
 
     let current = response.request_index;
-    state.requests[current].response = response;
+    state.bctx.main_col.requests[current].response = response;
 
-    let link = state.link.as_ref().unwrap();
+    let link = state.bctx.link.as_ref().unwrap();
 
     link.send_message(Msg::Update);
 }
-
 
 fn main() {
     wasm_bindgen_futures::spawn_local(async move {
@@ -278,4 +340,3 @@ fn main() {
 
     yew::Renderer::<BoltApp>::new().render();
 }
-
