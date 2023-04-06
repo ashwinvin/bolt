@@ -1,9 +1,14 @@
+// use web_sys::MouseEvent;
 use crate::utils::*;
 use futures::stream::StreamExt;
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
 use stylist::StyleSource;
 use tauri_sys::tauri;
+use wasm_bindgen::closure::Closure;
+use wasm_bindgen::JsCast;
+use web_sys::HtmlElement;
+use yew::MouseEvent;
 use yew::{html::Scope, Component, Context, Html};
 
 mod process;
@@ -180,6 +185,8 @@ pub struct BoltContext {
 
     main_col: Collection,
     collections: Vec<Collection>,
+
+    resized: bool,
 }
 
 impl BoltContext {
@@ -197,6 +204,8 @@ impl BoltContext {
             resp_tab: 1,
             main_current: 0,
             col_current: vec![0, 0],
+
+            resized: false,
         };
 
         return bctx;
@@ -245,6 +254,10 @@ impl Component for BoltApp {
         // let mut bctx = &state.bctx;
 
         // drop(state);
+
+        // if !state.bctx.resized {
+            // resizable(&mut state.bctx);
+        // }
 
         let render: bool = process::update::process(&mut state.bctx, msg);
 
@@ -337,4 +350,47 @@ fn main() {
     });
 
     yew::Renderer::<BoltApp>::new().render();
+}
+
+pub fn resizable(bctx: &mut BoltContext) {
+    bctx.resized = true;
+    
+    _bolt_log("did resizable");
+    let window = web_sys::window().unwrap();
+    let document = web_sys::Window::document(&window).unwrap();
+
+    // let resizer = web_sys::Document::get_element_by_id(&doc, "resizer")
+    //     .unwrap()
+    //     .dyn_into::<web_sys::HtmlElement>()
+    //     .unwrap();
+
+    // let sidebar = web_sys::Document::get_element_by_id(&doc, "sidebars")
+    //     .unwrap()
+    //     .dyn_into::<web_sys::HtmlElement>()
+    //     .unwrap();
+
+    let resizer = document.query_selector(".resizer").unwrap().unwrap();
+    let sidebar = document
+        .query_selector(".sidebars")
+        .unwrap()
+        .unwrap()
+        .dyn_into::<HtmlElement>()
+        .unwrap();
+
+    let sec_sidebar = sidebar.clone();
+
+    let closure = Closure::wrap(Box::new(move |event: MouseEvent| {
+        let size = format!("{}px", event.client_x());
+        sidebar.style().set_property("flex-basis", &size).unwrap();
+    }) as Box<dyn FnMut(MouseEvent)>);
+
+    resizer
+        .add_event_listener_with_callback("mousedown", closure.as_ref().unchecked_ref())
+        .unwrap();
+
+    closure.forget();
+    sec_sidebar
+        .style()
+        .set_property("flex-basis", "325px")
+        .unwrap();
 }

@@ -38,14 +38,14 @@ body {
 }
 
 .sidebar1 {
-	width: 5vw;
+	width: 8vw;
 	background-color: rgb(4, 12, 23);
 	height: 95vh;
 	border-right: 0.5px solid gray;
 }
 
 .sidebar2 {
-	width: 15vw;
+	width: 100%;
 	background-color: rgb(4, 12, 23);
 	height: 95vh;
 	border-right: 0.5px solid gray;
@@ -352,6 +352,33 @@ td {
 .tableinput:focus {
   outline: none;
 }
+
+
+.main {
+  width: 100vw;
+  flex-shrink: 0;
+}
+
+.sidebars {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  min-width: 10vw;
+}
+
+.resizer {
+  width: 5px;
+  z-index: 2;
+  cursor: col-resize;
+  background: rgb(27, 28, 28);
+}
+
+.content {
+  flex-basis: 0;
+  flex-grow: 1;
+  min-width: 0;
+}
+
     
 "#
     );
