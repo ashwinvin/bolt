@@ -2,9 +2,8 @@ use crate::BoltContext;
 use crate::view;
 use stylist::yew::Global;
 use yew::{html, Html};
-use crate::Request;
 
-pub fn collections_view(bctx: &mut BoltContext, request: Request) -> Html {
+pub fn collections_view(bctx: &mut BoltContext) -> Html {
     let req_tab = bctx.req_tab;
     // let ctx = bctx.ctx.unwrap();
     
@@ -20,7 +19,7 @@ pub fn collections_view(bctx: &mut BoltContext, request: Request) -> Html {
                 {view::sidebar2::sidebar_col(bctx)}
 
                 <div class="content">
-                    {view::request::request(bctx, request, req_tab)}
+                    {view::request::request(bctx, req_tab)}
                     {view::response::response(bctx)}
                 </div>
             </div>

@@ -178,7 +178,6 @@ pub struct BoltContext {
     main_current: usize,
     col_current: Vec<usize>,
 
-    
     main_col: Collection,
     collections: Vec<Collection>,
 }
@@ -259,23 +258,16 @@ impl Component for BoltApp {
 
         let page = state.bctx.page.clone();
 
-        let mut request = state.bctx.main_col.requests[state.bctx.main_current].clone();
-        if page == Page::Collections {
-            request = state.bctx.collections[state.bctx.col_current[0]].requests
-                [state.bctx.col_current[1]]
-                .clone();
-        }
-
         // let req_tab = bctx.req_tab;
 
         // drop(state);
 
         if page == Page::Home {
-            view::home::home_view(&mut state.bctx, request)
+            view::home::home_view(&mut state.bctx)
         } else if page == Page::Collections {
-            view::collections::collections_view(&mut state.bctx, request)
+            view::collections::collections_view(&mut state.bctx)
         } else {
-            view::home::home_view(&mut state.bctx, request)
+            view::home::home_view(&mut state.bctx)
         }
     }
 }
@@ -307,6 +299,7 @@ fn send_request(request: Request) {
 
 pub fn receive_response(data: &str) {
     let mut state = GLOBAL_STATE.lock().unwrap();
+    let bctx = &mut state.bctx;
 
     // bolt_log("received a response");
 
@@ -319,8 +312,13 @@ pub fn receive_response(data: &str) {
         response.body = highlight_body(&response.body);
     }
 
-    let current = response.request_index;
-    state.bctx.main_col.requests[current].response = response;
+    if bctx.page == Page::Home {
+        let current = response.request_index;
+        state.bctx.main_col.requests[current].response = response;
+    } else {
+        let current = &bctx.col_current;
+        bctx.collections[current[0]].requests[current[1]].response = response;
+    }
 
     let link = state.bctx.link.as_ref().unwrap();
 

@@ -5,9 +5,7 @@ use yew::{html, Html};
 use crate::Collection;
 
 pub fn sidebar_requests(bctx: &mut BoltContext) -> Html {
-    // let state = GLOBAL_STATE.lock().unwrap();
-    // let ctx = bctx.ctx.unwrap();
-     let link = bctx.link.as_ref().unwrap();
+    let link = bctx.link.as_ref().unwrap();
 
     html! {
         <div class="sidebar2">
@@ -24,9 +22,7 @@ pub fn sidebar_requests(bctx: &mut BoltContext) -> Html {
 }
 
 pub fn sidebar_col(bctx: &mut BoltContext) -> Html {
-    // let state = GLOBAL_STATE.lock().unwrap();
-    // let ctx = bctx.ctx.unwrap();
-     let link = bctx.link.as_ref().unwrap();
+    let link = bctx.link.as_ref().unwrap();
 
     html! {
         <div class="sidebar2">
