@@ -4,7 +4,7 @@ use stylist::yew::Global;
 use yew::{html, Html};
 use crate::Request;
 
-pub fn home_view(bctx: &mut BoltContext, request: Request) -> Html {
+pub fn home_view(bctx: &mut BoltContext) -> Html {
     // let ctx = bctx.ctx.unwrap();
     let req_tab = bctx.req_tab;
     
@@ -20,7 +20,7 @@ pub fn home_view(bctx: &mut BoltContext, request: Request) -> Html {
                 {view::sidebar2::sidebar_requests(bctx)}
 
                 <div class="content">
-                    {view::request::request(bctx, request, req_tab)}
+                    {view::request::request(bctx, req_tab)}
                     {view::response::response(bctx)}
                 </div>
             </div>

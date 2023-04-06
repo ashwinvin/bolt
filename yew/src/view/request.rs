@@ -1,16 +1,42 @@
 use crate::view;
 use crate::BoltContext;
 use crate::Msg;
+use crate::Page;
 use crate::Request;
 use yew::{html, Html};
 
-pub fn request(bctx: &mut BoltContext, request: Request, req_tab: u8) -> Html {
-    let method = request.method.to_string();
+pub fn request(bctx: &mut BoltContext, req_tab: u8) -> Html {
     let link = bctx.link.as_ref().unwrap();
+
+    let mut can_display = false;
+
+    if bctx.page == Page::Collections
+        && bctx.collections.len() > 0
+        && bctx.collections[bctx.col_current[0]].requests.len() > 0
+    {
+        can_display = true;
+    }
+
+    if bctx.page == Page::Home && bctx.main_col.requests.len() > 0 {
+        can_display = true;
+    }
+
+    let mut request = Request::new();
+
+    if bctx.page == Page::Home && can_display {
+        request = bctx.main_col.requests[bctx.main_current].clone();
+    }
+
+    if bctx.page == Page::Collections && can_display {
+        request = bctx.collections[bctx.col_current[0]].requests[bctx.col_current[1]].clone();
+    }
+
+    let method = request.method.to_string();
 
     // FIXME: method
     html! {
         <div class="req">
+        if can_display {
             <div class="requestbar">
                 <div class="">
                     <select id="methodselect" class="methodselect pointer" onchange={link.callback(|_| Msg::MethodChanged)}>
@@ -55,6 +81,7 @@ pub fn request(bctx: &mut BoltContext, request: Request, req_tab: u8) -> Html {
                     </table>
                 }
             </div>
+        }
         </div>
 
     }
