@@ -2,7 +2,6 @@ use crate::BoltContext;
 use crate::view;
 use stylist::yew::Global;
 use yew::{html, Html};
-use crate::Request;
 
 pub fn home_view(bctx: &mut BoltContext) -> Html {
     // let ctx = bctx.ctx.unwrap();
