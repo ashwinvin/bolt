@@ -1,10 +1,10 @@
 use crate::BoltContext;
 use crate::view;
-use stylist::yew::Global;
+// use stylist::yew::Global;
 use yew::{html, Html};
 
 pub fn collections_view(bctx: &mut BoltContext) -> Html {
-    let req_tab = bctx.req_tab;
+    // let req_tab = bctx.req_tab;
     // let ctx = bctx.ctx.unwrap();
     
     html! {
@@ -23,7 +23,7 @@ pub fn collections_view(bctx: &mut BoltContext) -> Html {
                 <div class="resizer"></div>
         
                 <div class="content">
-                    {view::request::request(bctx, req_tab)}
+                    {view::request::request(bctx)}
                                 
                     <div class="resizer2"></div>     
         

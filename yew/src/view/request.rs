@@ -5,7 +5,7 @@ use crate::Page;
 use crate::Request;
 use yew::{html, Html};
 
-pub fn request(bctx: &mut BoltContext, req_tab: u8) -> Html {
+pub fn request(bctx: &mut BoltContext) -> Html {
     let link = bctx.link.as_ref().unwrap();
 
     let mut can_display = false;
@@ -45,25 +45,23 @@ pub fn request(bctx: &mut BoltContext, req_tab: u8) -> Html {
                     </select>
                 </div>
 
-                <div>
-                    <input id="urlinput" class="urlinput" type="text" value={request.url.clone()} placeholder="http://" onchange={link.callback(|_| Msg::UrlChanged)}/>
-                </div>
+                <input id="urlinput" class="urlinput" type="text" value={request.url.clone()} placeholder="http://" onchange={link.callback(|_| Msg::UrlChanged)}/>
 
                 <button class="sendbtn pointer" type="button" onclick={link.callback(|_| Msg::SendPressed)}>{"Send"}</button>
             </div>
 
             <div class="reqtabs">
-                <div id="req_body_tab" class=" tab pointer tabSelected" onclick={link.callback(|_| Msg::ReqBodyPressed)}>{"Body"}</div>
-                <div id="req_params_tab" class=" tab pointer" onclick={link.callback(|_| Msg::ReqParamsPressed)}>{"Params"}</div>
-                <div id="req_headers_tab" class=" tab pointer" onclick={link.callback(|_| Msg::ReqHeadersPressed)}>{"Headers"}</div>
+                <div id="req_body_tab" class={if request.req_tab == 1  {"tab pointer tabSelected"} else {"tab pointer"}} onclick={link.callback(|_| Msg::ReqBodyPressed)}>{"Body"}</div>
+                <div id="req_params_tab" class={if request.req_tab == 2  {"tab pointer tabSelected"} else {"tab pointer"}} onclick={link.callback(|_| Msg::ReqParamsPressed)}>{"Params"}</div>
+                <div id="req_headers_tab" class={if request.req_tab == 3  {"tab pointer tabSelected"} else {"tab pointer"}} onclick={link.callback(|_| Msg::ReqHeadersPressed)}>{"Headers"}</div>
             </div>
 
             <div class="tabcontent">
-                if req_tab == 1 {
+                if request.req_tab == 1 {
                     <textarea id="reqbody" class="reqbody" value={request.body.clone()} placeholder="Request body" onchange={link.callback(|_| Msg::BodyChanged)}>
 
                     </textarea>
-                } else if req_tab == 2 {
+                } else if request.req_tab == 2 {
                     <table>
                         <tr>
                             <th>{"Key"}</th>
@@ -71,7 +69,7 @@ pub fn request(bctx: &mut BoltContext, req_tab: u8) -> Html {
                         </tr>
                         { for request.params.iter().enumerate().map(|(index, header)| view::param::render_params(bctx, index, request.params.len(), &header[0], &header[1])) }
                     </table>
-                } else if req_tab == 3 {
+                } else if request.req_tab == 3 {
                     <table>
                         <tr>
                             <th>{"Header"}</th>
