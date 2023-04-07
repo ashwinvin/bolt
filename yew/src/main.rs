@@ -13,11 +13,9 @@ mod view;
 
 // http://localhost:2000/ping
 
-// TODO: custom scrollbar
-// FIXME: resize sleep delay
-// FIXME: response target request index / collection
-// FIXME: Method dropdown style
-// FIXME: vertical resize limits
+// FIXME: body responsiveness
+// TODO: Add more methods
+
 
 // #[wasm_bindgen(module = "/script.js")]
 // extern "C" {}
