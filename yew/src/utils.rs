@@ -150,7 +150,7 @@ pub fn get_param(index: usize) -> Vec<String> {
     return result;
 }
 
-pub fn switch_req_tab(index: u8) {
+pub fn _switch_req_tab(index: u8) {
     let window = web_sys::window().unwrap();
     let doc = web_sys::Window::document(&window).unwrap();
 
@@ -193,7 +193,7 @@ pub fn switch_req_tab(index: u8) {
     }
 }
 
-pub fn switch_resp_tab(index: u8) {
+pub fn _switch_resp_tab(index: u8) {
     let window = web_sys::window().unwrap();
     let doc = web_sys::Window::document(&window).unwrap();
 
@@ -247,10 +247,10 @@ fn create_custom_theme() -> Theme {
 
     // Change the background color
     theme.settings.background = Some(Color {
-        r: 0,
-        g: 0,
-        b: 0,
-        a: 0,
+        r: 3,
+        g: 7,
+        b: 13,
+        a: 1,
     });
 
     theme

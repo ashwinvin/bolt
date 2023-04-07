@@ -3,12 +3,7 @@ use crate::utils::*;
 use futures::stream::StreamExt;
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
-use stylist::StyleSource;
 use tauri_sys::tauri;
-use wasm_bindgen::closure::Closure;
-use wasm_bindgen::JsCast;
-use web_sys::HtmlElement;
-use yew::MouseEvent;
 use yew::{html::Scope, Component, Context, Html};
 
 mod process;
@@ -17,8 +12,12 @@ mod utils;
 mod view;
 
 // http://localhost:2000/ping
-// ⌄
 
+// TODO: custom scrollbar
+// FIXME: resize sleep delay
+// FIXME: response target request index / collection
+// FIXME: Method dropdown style
+// FIXME: vertical resize limits
 
 // #[wasm_bindgen(module = "/script.js")]
 // extern "C" {}
@@ -135,6 +134,9 @@ pub struct Request {
     // META
     name: String,
     request_index: usize,
+
+    req_tab: u8,
+    resp_tab: u8,
 }
 
 impl Request {
@@ -149,8 +151,11 @@ impl Request {
             response: Response::new(),
 
             // META
-            name: "NEW REQUEST ".to_string(),
+            name: "New Request ".to_string(),
             request_index: 0,
+
+            req_tab: 1,
+            resp_tab: 1,
         }
     }
 }
@@ -159,15 +164,15 @@ impl Request {
 struct Collection {
     name: String,
     requests: Vec<Request>,
-    collapsed: bool
+    collapsed: bool,
 }
 
 impl Collection {
     fn new() -> Collection {
         Collection {
-            name: "NEW COLLECTION ".to_string(),
+            name: "New Collection ".to_string(),
             requests: vec![],
-            collapsed: false
+            collapsed: false,
         }
     }
 }
@@ -182,17 +187,13 @@ pub struct BoltContext {
     link: Option<Scope<BoltApp>>,
 
     // style: StyleSource,
-
     page: Page,
-    req_tab: u8,
-    resp_tab: u8,
     main_current: usize,
     col_current: Vec<usize>,
 
     main_col: Collection,
     collections: Vec<Collection>,
-
-    resized: bool,
+    // resized: bool,
 }
 
 impl BoltContext {
@@ -201,17 +202,13 @@ impl BoltContext {
             link: None,
 
             // style: style::style::get_styles(),
-
             main_col: Collection::new(),
             collections: vec![],
             page: Page::Home,
 
-            req_tab: 1,
-            resp_tab: 1,
             main_current: 0,
             col_current: vec![0, 0],
-
-            resized: false,
+            // resized: false,
         };
 
         return bctx;
@@ -248,9 +245,9 @@ impl Component for BoltApp {
 
         state.bctx.main_col.requests.push(Request::new());
 
-        let mut first_collection = Collection::new();
-        first_collection.requests.push(Request::new());
-        state.bctx.collections.push(first_collection);
+        // let mut first_collection = Collection::new();
+        // first_collection.requests.push(Request::new());
+        // state.bctx.collections.push(first_collection);
 
         Self {}
     }
@@ -262,7 +259,7 @@ impl Component for BoltApp {
         // drop(state);
 
         // if !state.bctx.resized {
-            // resizable(&mut state.bctx);
+        // resizable(&mut state.bctx);
         // }
 
         let render: bool = process::update::process(&mut state.bctx, msg);
@@ -360,7 +357,7 @@ fn main() {
 
 // pub fn resizable(bctx: &mut BoltContext) {
 //     bctx.resized = true;
-    
+
 //     _bolt_log("did resizable");
 //     let window = web_sys::window().unwrap();
 //     let document = web_sys::Window::document(&window).unwrap();

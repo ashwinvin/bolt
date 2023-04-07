@@ -47,37 +47,72 @@ pub fn process(bctx: &mut BoltContext, msg: Msg) -> bool {
         }
 
         Msg::ReqBodyPressed => {
-            bctx.req_tab = 1;
+            if bctx.page == Page::Home {
+                let req = &mut bctx.main_col.requests[bctx.main_current];
 
-            switch_req_tab(1);
+                req.req_tab = 1;
+            } else {
+                let current = &bctx.col_current;
+                let req = &mut bctx.collections[current[0]].requests[current[1]];
+                req.req_tab = 1;
+            }
+
             return true;
         }
 
         Msg::ReqHeadersPressed => {
-            bctx.req_tab = 3;
+            if bctx.page == Page::Home {
+                let req = &mut bctx.main_col.requests[bctx.main_current];
 
-            switch_req_tab(3);
+                req.req_tab = 3;
+            } else {
+                let current = &bctx.col_current;
+                let req = &mut bctx.collections[current[0]].requests[current[1]];
+                req.req_tab = 3;
+            }
+
             return true;
         }
 
         Msg::ReqParamsPressed => {
-            bctx.req_tab = 2;
+            if bctx.page == Page::Home {
+                let req = &mut bctx.main_col.requests[bctx.main_current];
 
-            switch_req_tab(2);
+                req.req_tab = 2;
+            } else {
+                let current = &bctx.col_current;
+                let req = &mut bctx.collections[current[0]].requests[current[1]];
+                req.req_tab = 2;
+            }
+
             return true;
         }
 
         Msg::RespBodyPressed => {
-            bctx.resp_tab = 1;
+            if bctx.page == Page::Home {
+                let mut req = &mut bctx.main_col.requests[bctx.main_current];
 
-            switch_resp_tab(1);
+                req.resp_tab = 1;
+            } else {
+                let current = &bctx.col_current;
+                let req = &mut bctx.collections[current[0]].requests[current[1]];
+                req.resp_tab = 1;
+            }
+
             return true;
         }
 
         Msg::RespHeadersPressed => {
-            bctx.resp_tab = 2;
+            if bctx.page == Page::Home {
+                let req = &mut bctx.main_col.requests[bctx.main_current];
 
-            switch_resp_tab(2);
+                req.resp_tab = 2;
+            } else {
+                let current = &bctx.col_current;
+                let req = &mut bctx.collections[current[0]].requests[current[1]];
+                req.resp_tab = 2;
+            }
+
             return true;
         }
 
@@ -134,7 +169,7 @@ pub fn process(bctx: &mut BoltContext, msg: Msg) -> bool {
             let mut new_collection = Collection::new();
 
             new_collection.name = new_collection.name + &(bctx.collections.len() + 1).to_string();
-            new_collection.requests.push(Request::new());
+            // new_collection.requests.push(Request::new());
 
             bctx.collections.push(new_collection);
 
@@ -257,7 +292,7 @@ pub fn process(bctx: &mut BoltContext, msg: Msg) -> bool {
 
         Msg::ToggleCollapsed(index) => {
             let collection = &mut bctx.collections[index];
-            
+
             collection.collapsed = !collection.collapsed;
 
             return true;
@@ -265,12 +300,14 @@ pub fn process(bctx: &mut BoltContext, msg: Msg) -> bool {
 
         Msg::RemoveRequest(index) => {
             // if bctx.main_col.requests.len() > 1 {
-                bctx.main_col.requests.remove(index);
+            bctx.main_col.requests.remove(index);
             // } else {
-                // bctx.main_col.requests = vec![Request::new()];
+            // bctx.main_col.requests = vec![Request::new()];
             // }
 
-            if bctx.main_col.requests.len() > 0 && bctx.main_current > bctx.main_col.requests.len() - 1 {
+            if bctx.main_col.requests.len() > 0
+                && bctx.main_current > bctx.main_col.requests.len() - 1
+            {
                 bctx.main_current = bctx.main_col.requests.len() - 1;
             }
 
@@ -279,9 +316,9 @@ pub fn process(bctx: &mut BoltContext, msg: Msg) -> bool {
 
         Msg::RemoveFromCollection(col_index, req_index) => {
             // if bctx.collections[col_index].requests.len() > 1 {
-                bctx.collections[col_index].requests.remove(req_index);
+            bctx.collections[col_index].requests.remove(req_index);
             // } else {
-                // bctx.collections[col_index].requests = vec![Request::new()];
+            // bctx.collections[col_index].requests = vec![Request::new()];
             // }
 
             bctx.col_current = vec![0, 0];

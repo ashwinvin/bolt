@@ -16,10 +16,10 @@ setTimeout(function() {
 
   function resize(e) {
     const size = `${e.x}px`;
-    sidebar.style.flexBasis = size;
+    sidebar.style.width = size;
   }
 
-  sidebar.style.flexBasis = '325px';
+  sidebar.style.width = '250px';
 }, 5000);
 
 setTimeout(function() {
@@ -38,8 +38,8 @@ setTimeout(function() {
 
   function resize(e) {
     const size = `${e.y}px`;
-    req.style.flexBasis = size;
+    req.style.height = size;
   }
 
-  req.style.flexBasis = '325px';
+  req.style.height = '325px';
 }, 5000);

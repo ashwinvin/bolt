@@ -7,8 +7,8 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "bolt",
-    "version": "0.1.0"
+    "productName": "Bolt",
+    "version": "0.7.4"
   },
   "tauri": {
     "allowlist": {
@@ -59,7 +59,7 @@
         "height": 600,
         "resizable": true,
         "title": "Bolt",
-        "width": 800
+        "width": 1000
       }
     ]
   }

@@ -1,6 +1,6 @@
 use stylist::css;
 
-pub fn get_styles() -> stylist::StyleSource {
+pub fn _get_styles() -> stylist::StyleSource {
     return css!(
         r#"
 * {

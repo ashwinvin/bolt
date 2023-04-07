@@ -187,7 +187,7 @@ body {
 
 .urlinput {
 	height: 40px;
-	width: 60vw;
+	width: 100%;
 	background: rgb(23, 59, 97);
 	color: white;
 	font-size: 15px;
@@ -200,11 +200,12 @@ body {
 
 .sendbtn {
 	height: 40px;
-	width: 70px;
+	width: 90px;
 	background: rgb(171, 113, 7);
 	border: 0px;
 	color: white;
 	margin-left: 5px;
+	margin-right: 15px;
 	font-size: 15px;
 }
 
@@ -411,4 +412,12 @@ td {
 
 .col-arrow:hover {
 	background: gray;
+}
+
+.col-icons {
+	width: 40px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
 }
