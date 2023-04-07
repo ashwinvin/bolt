@@ -86,6 +86,10 @@ body {
 	 background: rgb(23, 59, 97);
 }
 
+.sidebar2item-child:hover {
+	 background: rgb(23, 59, 97);
+}
+
 .sidebar2item-child {
 	display: flex;
 	flex-direction: row;
