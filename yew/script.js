@@ -27,7 +27,7 @@ setTimeout(function() {
   const req = document.querySelector(".req");
 
   resizer2.addEventListener("mousedown", (event) => {
-    document.body.style.cursor = "col-resize";
+    document.body.style.cursor = "row-resize";
     document.addEventListener("mousemove", resize, false);
 
     document.addEventListener("mouseup", () => {
