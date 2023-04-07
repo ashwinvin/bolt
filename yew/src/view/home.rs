@@ -9,7 +9,7 @@ pub fn home_view(bctx: &mut BoltContext) -> Html {
     
     html! {
         <>
-        <Global css={bctx.style.clone()} />
+        // <Global css={bctx.style.clone()} />
 
         <body>
             {view::navbar::get_navbar(bctx)}
@@ -24,6 +24,9 @@ pub fn home_view(bctx: &mut BoltContext) -> Html {
         
                 <div class="content">
                     {view::request::request(bctx, req_tab)}
+
+                    <div class="resizer2"></div>
+        
                     {view::response::response(bctx)}
                 </div>
             </div>

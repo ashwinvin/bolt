@@ -175,7 +175,7 @@ pub struct BoltState {
 pub struct BoltContext {
     link: Option<Scope<BoltApp>>,
 
-    style: StyleSource,
+    // style: StyleSource,
 
     page: Page,
     req_tab: u8,
@@ -194,7 +194,7 @@ impl BoltContext {
         let bctx = BoltContext {
             link: None,
 
-            style: style::style::get_styles(),
+            // style: style::style::get_styles(),
 
             main_col: Collection::new(),
             collections: vec![],
@@ -352,45 +352,45 @@ fn main() {
     yew::Renderer::<BoltApp>::new().render();
 }
 
-pub fn resizable(bctx: &mut BoltContext) {
-    bctx.resized = true;
+// pub fn resizable(bctx: &mut BoltContext) {
+//     bctx.resized = true;
     
-    _bolt_log("did resizable");
-    let window = web_sys::window().unwrap();
-    let document = web_sys::Window::document(&window).unwrap();
+//     _bolt_log("did resizable");
+//     let window = web_sys::window().unwrap();
+//     let document = web_sys::Window::document(&window).unwrap();
 
-    // let resizer = web_sys::Document::get_element_by_id(&doc, "resizer")
-    //     .unwrap()
-    //     .dyn_into::<web_sys::HtmlElement>()
-    //     .unwrap();
+//     // let resizer = web_sys::Document::get_element_by_id(&doc, "resizer")
+//     //     .unwrap()
+//     //     .dyn_into::<web_sys::HtmlElement>()
+//     //     .unwrap();
 
-    // let sidebar = web_sys::Document::get_element_by_id(&doc, "sidebars")
-    //     .unwrap()
-    //     .dyn_into::<web_sys::HtmlElement>()
-    //     .unwrap();
+//     // let sidebar = web_sys::Document::get_element_by_id(&doc, "sidebars")
+//     //     .unwrap()
+//     //     .dyn_into::<web_sys::HtmlElement>()
+//     //     .unwrap();
 
-    let resizer = document.query_selector(".resizer").unwrap().unwrap();
-    let sidebar = document
-        .query_selector(".sidebars")
-        .unwrap()
-        .unwrap()
-        .dyn_into::<HtmlElement>()
-        .unwrap();
+//     let resizer = document.query_selector(".resizer").unwrap().unwrap();
+//     let sidebar = document
+//         .query_selector(".sidebars")
+//         .unwrap()
+//         .unwrap()
+//         .dyn_into::<HtmlElement>()
+//         .unwrap();
 
-    let sec_sidebar = sidebar.clone();
+//     let sec_sidebar = sidebar.clone();
 
-    let closure = Closure::wrap(Box::new(move |event: MouseEvent| {
-        let size = format!("{}px", event.client_x());
-        sidebar.style().set_property("flex-basis", &size).unwrap();
-    }) as Box<dyn FnMut(MouseEvent)>);
+//     let closure = Closure::wrap(Box::new(move |event: MouseEvent| {
+//         let size = format!("{}px", event.client_x());
+//         sidebar.style().set_property("flex-basis", &size).unwrap();
+//     }) as Box<dyn FnMut(MouseEvent)>);
 
-    resizer
-        .add_event_listener_with_callback("mousedown", closure.as_ref().unchecked_ref())
-        .unwrap();
+//     resizer
+//         .add_event_listener_with_callback("mousedown", closure.as_ref().unchecked_ref())
+//         .unwrap();
 
-    closure.forget();
-    sec_sidebar
-        .style()
-        .set_property("flex-basis", "325px")
-        .unwrap();
-}
+//     closure.forget();
+//     sec_sidebar
+//         .style()
+//         .set_property("flex-basis", "325px")
+//         .unwrap();
+// }

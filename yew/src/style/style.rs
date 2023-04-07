@@ -48,7 +48,6 @@ body {
 	width: 100%;
 	background-color: rgb(4, 12, 23);
 	height: 95vh;
-	border-right: 0.5px solid gray;
 
 	overflow: scroll;
 }
@@ -214,9 +213,6 @@ body {
 	 background: rgb(186, 123, 6);
 }
 
-.req, .resp {
-	height: 100%;
-}
 
 .req .tabcontent {
 	height: 100%;
@@ -373,13 +369,30 @@ td {
   background: rgb(27, 28, 28);
 }
 
+
 .content {
   flex-basis: 0;
   flex-grow: 1;
   min-width: 0;
 }
 
-    
+
+
+.resizer2 {
+  height: 5px;
+  z-index: 2;
+  cursor: col-resize;
+  background: rgb(27, 28, 28);
+}
+
+.content {
+  height: 95vw;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+
 "#
     );
 }
