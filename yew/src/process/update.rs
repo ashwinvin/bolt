@@ -255,6 +255,14 @@ pub fn process(bctx: &mut BoltContext, msg: Msg) -> bool {
             return true;
         }
 
+        Msg::ToggleCollapsed(index) => {
+            let collection = &mut bctx.collections[index];
+            
+            collection.collapsed = !collection.collapsed;
+
+            return true;
+        }
+
         Msg::RemoveRequest(index) => {
             // if bctx.main_col.requests.len() > 1 {
                 bctx.main_col.requests.remove(index);

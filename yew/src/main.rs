@@ -17,6 +17,8 @@ mod utils;
 mod view;
 
 // http://localhost:2000/ping
+// ⌄
+
 
 // #[wasm_bindgen(module = "/script.js")]
 // extern "C" {}
@@ -57,6 +59,8 @@ pub enum Msg {
 
     SelectFromCollection(usize, usize),
     RemoveFromCollection(usize, usize),
+
+    ToggleCollapsed(usize),
 
     Update,
     HelpPressed,
@@ -155,6 +159,7 @@ impl Request {
 struct Collection {
     name: String,
     requests: Vec<Request>,
+    collapsed: bool
 }
 
 impl Collection {
@@ -162,6 +167,7 @@ impl Collection {
         Collection {
             name: "NEW COLLECTION ".to_string(),
             requests: vec![],
+            collapsed: false
         }
     }
 }
