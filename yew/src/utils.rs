@@ -73,6 +73,12 @@ pub fn get_method() -> Method {
     let value = match value.as_str() {
         "get" => Method::GET,
         "post" => Method::POST,
+        "put" => Method::PUT,
+        "delete" => Method::DELETE,
+        "head" => Method::HEAD,
+        "patch" => Method::PATCH,
+        "options" => Method::OPTIONS,
+        "connect" => Method::CONNECT,
 
         _ => {
             bolt_panic("invalid method");
