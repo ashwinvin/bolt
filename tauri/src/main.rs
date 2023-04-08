@@ -10,7 +10,12 @@ use tauri::Window;
 pub enum Method {
     GET,
     POST,
-    NONE,
+    PUT,
+    DELETE,
+    HEAD,
+    PATCH,
+    OPTIONS,
+    CONNECT,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
@@ -30,7 +35,7 @@ struct HttpResponse {
     request_index: usize,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 struct HttpRequest {
     url: String,
     method: Method,
@@ -125,59 +130,26 @@ fn http_send(req: HttpRequest) -> HttpResponse {
 
     resp.request_index = req.request_index;
 
-    let client = reqwest::blocking::Client::new();
+    let mut request = prepare_request(req.clone());
 
-    match req.method {
-        Method::GET => {
-            let mut request = client.get(req.url).body(req.body);
-
-            for h in req.headers {
-                if h[0] != "" && h[1] != "" {
-                    println!("{} : {}", h[0], h[1]);
-                    request = request.header(h[0].clone(), h[1].clone());
-                }
-            }
-
-            let start = get_timestamp();
-            let response = request.send().unwrap();
-            let end = get_timestamp();
-
-            let headers = extract_headers(response.headers());
-
-            resp.status = response.status().as_u16();
-            resp.time = (end - start) as u32;
-            resp.body = response.text().unwrap();
-            resp.headers = headers;
-            resp.size = resp.body.len() as u64;
-        }
-
-        Method::POST => {
-            let mut request = client.post(req.url).body(req.body);
-
-            for h in req.headers {
-                if h[0] != "" && h[1] != "" {
-                    println!("{} : {}", h[0], h[1]);
-                    request = request.header(h[0].clone(), h[1].clone());
-                }
-            }
-
-            let start = get_timestamp();
-            let response = request.send().unwrap();
-            let end = get_timestamp();
-
-            let headers = extract_headers(response.headers());
-
-            resp.status = response.status().as_u16();
-            resp.time = (end - start) as u32;
-            resp.body = response.text().unwrap();
-            resp.headers = headers;
-            resp.size = resp.body.len() as u64;
-        }
-
-        Method::NONE => {
-            panic!("Invalid method");
+    for h in req.headers {
+        if h[0] != "" && h[1] != "" {
+            println!("{} : {}", h[0], h[1]);
+            request = request.header(h[0].clone(), h[1].clone());
         }
     }
+
+    let start = get_timestamp();
+    let response = request.send().unwrap();
+    let end = get_timestamp();
+
+    let headers = extract_headers(response.headers());
+
+    resp.status = response.status().as_u16();
+    resp.time = (end - start) as u32;
+    resp.body = response.text().unwrap();
+    resp.headers = headers;
+    resp.size = resp.body.len() as u64;
 
     if resp.headers.contains(&vec![
         "content-type".to_string(),
@@ -190,6 +162,27 @@ fn http_send(req: HttpRequest) -> HttpResponse {
     state.response = resp.clone();
 
     return resp;
+}
+
+fn prepare_request(req: HttpRequest) -> reqwest::blocking::RequestBuilder {
+    let client = reqwest::blocking::Client::new();
+
+    let builder = match req.method {
+        Method::GET => client.get(req.url).body(req.body),
+        Method::POST => client.post(req.url).body(req.body),
+        Method::PUT => client.put(req.url).body(req.body),
+        Method::DELETE => client.delete(req.url).body(req.body),
+        Method::HEAD => client.head(req.url).body(req.body),
+        Method::PATCH => client.patch(req.url).body(req.body),
+        Method::OPTIONS => client.request(reqwest::Method::OPTIONS, req.url).body(req.body),
+        Method::CONNECT => client.request(reqwest::Method::CONNECT, req.url).body(req.body),
+
+        _ => {
+            panic!("Invalid method")
+        }
+    };
+
+    return builder;
 }
 
 fn extract_headers(map: &reqwest::header::HeaderMap) -> Vec<Vec<String>> {

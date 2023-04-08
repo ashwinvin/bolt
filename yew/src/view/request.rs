@@ -42,6 +42,12 @@ pub fn request(bctx: &mut BoltContext) -> Html {
                     <select id="methodselect" class="methodselect pointer" onchange={link.callback(|_| Msg::MethodChanged)}>
                         <option value="get" selected={if method == "get" { true } else { false }}>{"GET"}</option>
                         <option value="post" selected={if method == "post" { true } else { false }}>{"POST"}</option>
+                        <option value="put" selected={if method == "put" { true } else { false }}>{"PUT"}</option>
+                        <option value="delete" selected={if method == "delete" { true } else { false }}>{"DELETE"}</option>
+                        <option value="head" selected={if method == "head" { true } else { false }}>{"HEAD"}</option>
+                        <option value="patch" selected={if method == "patch" { true } else { false }}>{"PATCH"}</option>
+                        <option value="options" selected={if method == "options" { true } else { false }}>{"OPTIONS"}</option>
+                        <option value="copy" selected={if method == "copy" { true } else { false }}>{"COPY"}</option>
                     </select>
                 </div>
 

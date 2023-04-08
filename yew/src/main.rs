@@ -14,8 +14,6 @@ mod view;
 // http://localhost:2000/ping
 
 // FIXME: body responsiveness
-// TODO: Add more methods
-
 
 // #[wasm_bindgen(module = "/script.js")]
 // extern "C" {}
@@ -80,6 +78,12 @@ pub enum ResponseType {
 pub enum Method {
     GET,
     POST,
+    PUT,
+    DELETE,
+    HEAD,
+    PATCH,
+    OPTIONS,
+    CONNECT,
 }
 
 impl Method {
@@ -87,6 +91,12 @@ impl Method {
         match self {
             Method::GET => "get".to_string(),
             Method::POST => "post".to_string(),
+            Method::PUT => "put".to_string(),
+            Method::DELETE => "delete".to_string(),
+            Method::HEAD => "head".to_string(),
+            Method::PATCH => "patch".to_string(),
+            Method::OPTIONS => "options".to_string(),
+            Method::CONNECT => "connect".to_string(),
         }
     }
 }
