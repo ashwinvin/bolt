@@ -176,10 +176,6 @@ fn prepare_request(req: HttpRequest) -> reqwest::blocking::RequestBuilder {
         Method::PATCH => client.patch(req.url).body(req.body),
         Method::OPTIONS => client.request(reqwest::Method::OPTIONS, req.url).body(req.body),
         Method::CONNECT => client.request(reqwest::Method::CONNECT, req.url).body(req.body),
-
-        _ => {
-            panic!("Invalid method")
-        }
     };
 
     return builder;

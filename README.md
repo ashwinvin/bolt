@@ -3,9 +3,24 @@
 [![GitHub top language](https://img.shields.io/github/languages/top/hiro-codes/bolt)](https://github.com/hiro-codes/bolt/search?l=rust)
 
 # Bolt ⚡
-Bolt is a desktop application that is designed to make the process of developing and testing APIs easier and more efficient.
+Bolt is a desktop application that is designed to make the process of developing and testing APIs easier and more efficient. Like Postman, but open source and written in Rust 🦀
 
-## Quick start 👩‍💻
+
+![screenshot](https://github.com/hiro-codes/bolt/blob/main/screenshot.png?raw=true)
+
+## Installation
+
+
+> **Warning**: Bolt is experimental software. Expect:
+> * BUGS
+> * Missing features
+> * Breaking changes
+
+### Download pre-built binaries
+
+Pre-built binaries for Windows, macOS and Linux can be found in the [latest release](https://github.com/hiro-codes/bolt/releases/latest) downloads section.
+
+### Build from source 👩‍💻
 
 > ⚠️ Prerequisites
 > 
@@ -30,7 +45,8 @@ make run
 
 ## Features 🚧
  * [x] Http Requests
- * [ ] Collections
+ * [x] Collections
+ * [ ] Testing and benchmarking
  
 ## Contributors ✨
 
