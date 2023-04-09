@@ -6,13 +6,13 @@
 Bolt is a desktop application that is designed to make the process of developing and testing APIs easier and more efficient. Like Postman, but open source and written in Rust 🦀
 
 
-![screenshot](https://github.com/hiro-codes/bolt/blob/main/screenshot.png?raw=true)
+![screenshot](https://github.com/hiro-codes/bolt/blob/master/screenshot.png?raw=true)
 
 ## Installation
 
 
 > **Warning**: Bolt is experimental software. Expect:
-> * BUGS
+> * Bugs
 > * Missing features
 > * Breaking changes
 
@@ -40,13 +40,14 @@ make setup
 ```
 
 ```bash
-make run
+make build
 ```
 
 ## Features 🚧
  * [x] Http Requests
  * [x] Collections
  * [ ] Testing and benchmarking
+ * [ ] Websockets
  
 ## Contributors ✨
 
