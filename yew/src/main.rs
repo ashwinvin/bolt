@@ -13,8 +13,6 @@ mod view;
 
 // http://localhost:2000/ping
 
-// FIXME: body responsiveness
-
 // #[wasm_bindgen(module = "/script.js")]
 // extern "C" {}
 
